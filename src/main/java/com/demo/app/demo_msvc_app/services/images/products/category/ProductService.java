@@ -2,9 +2,6 @@ package com.demo.app.demo_msvc_app.services.images.products.category;
 
 import java.util.List;
 import java.util.Optional;
-
-
-
 import org.springframework.stereotype.Service;
 import com.demo.app.demo_msvc_app.entities.Category;
 import com.demo.app.demo_msvc_app.entities.Product;
@@ -56,8 +53,8 @@ public class ProductService implements ProductServiceIMPL {
     }
 
     @Override
-    public Optional<Product> getProductById(Long id) {
-       return productRepository.findById(id);
+    public Product getProductById(Long id) {
+       return productRepository.findById(id).orElseGet(null);
     }
 
     @Override
@@ -66,10 +63,13 @@ public class ProductService implements ProductServiceIMPL {
         }
 
     @Override
-    public Product updateProduct(Product product, Long productId) {
-       return productRepository.save(product);
+    public Product updateProduct(UpdateProductR request, Long productId) {
+       return productRepository.findById(productId)
+       .map(existingProduct -> updateExistingProduct(existingProduct, request))
+       .map(productRepository :: save)           
+       .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
-    @SuppressWarnings("unused")
+    
     private Product updateExistingProduct(Product existingProduct, UpdateProductR request){
         existingProduct.setName(request.getName());
         existingProduct.setBrand(request.getBrand());
