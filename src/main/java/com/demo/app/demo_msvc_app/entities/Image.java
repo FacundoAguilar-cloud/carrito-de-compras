@@ -22,7 +22,7 @@ private Long id;
 private String fileName;
 private String fileType;
 @Lob
-private byte[] data;
+private byte[] image;
 private String downloadUrl;
 @ManyToOne
 @JoinColumn(name= "product_id")
