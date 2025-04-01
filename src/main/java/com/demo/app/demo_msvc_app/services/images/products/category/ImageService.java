@@ -30,7 +30,7 @@ public class ImageService implements ImageServiceIMPL {
     }
 
     @Override
-    public List <ImageDto> createImage(List <MultipartFile> files, Long productId) {
+    public List <ImageDto> saveImage(List <MultipartFile> files, Long productId) {
         Product product = productService.getProductById(productId);
         List <ImageDto> imageDtos = new ArrayList<>();
         for(MultipartFile file: files) {

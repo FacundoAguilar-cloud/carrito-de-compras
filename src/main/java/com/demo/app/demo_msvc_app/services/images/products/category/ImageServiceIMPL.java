@@ -12,7 +12,7 @@ Image getImageById(Long Id);
 
 List <Image> getAllImages();
 
-List <ImageDto> createImage(List <MultipartFile> files, Long productId);
+List <ImageDto> saveImage(List <MultipartFile> files, Long productId);
 
 void updateImage(MultipartFile file, Long imageId);
 
