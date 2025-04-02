@@ -40,6 +40,7 @@ public Product(String name, String brand, BigDecimal price, int inventory, Strin
         this.inventory = inventory;
         this.description = description;
         this.category = category;
+        
     }
 
 }

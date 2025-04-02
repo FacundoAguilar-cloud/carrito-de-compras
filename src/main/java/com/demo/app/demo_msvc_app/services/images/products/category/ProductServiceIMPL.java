@@ -8,9 +8,9 @@ import com.demo.app.demo_msvc_app.request.AddProductR;
 import com.demo.app.demo_msvc_app.request.UpdateProductR;
 
 public interface ProductServiceIMPL {
-Product addProduct(AddProductR product);
 List <Product> getAllProducts();
- Product getProductById(Long id);
+Product getProductById(Long id);
+Product addProduct(AddProductR product);
 void deleteProduct(Long id);
 Product updateProduct(UpdateProductR product, Long productId);
 List <Product> getProductsByCategory(String category);
