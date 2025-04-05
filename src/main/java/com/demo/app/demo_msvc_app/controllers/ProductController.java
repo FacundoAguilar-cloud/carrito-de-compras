@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api")
 public class ProductController {
 private final ProductServiceIMPL productServiceIMPL;
-@GetMapping("/get-all")
+@GetMapping("/get-all-products")
 public  ResponseEntity<ApiResponse> getAllProducts(){
     try {
         List <Product> products = productServiceIMPL.getAllProducts();
@@ -52,7 +52,7 @@ public  ResponseEntity<ApiResponse> getProductsByCategory(@RequestParam String c
     }
 
 }
-@GetMapping("/get-by-name")
+@GetMapping("/get-product-by-name")
 public  ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name){
     try {
         List <Product> products = productServiceIMPL.getProductsByName(name);
@@ -77,7 +77,7 @@ public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String bran
 }
 
 
-@GetMapping("/get-by-id{id}")
+@GetMapping("/get-product-by-id{id}")
 public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
     try { 
         Product product = productServiceIMPL.getProductById(productId);

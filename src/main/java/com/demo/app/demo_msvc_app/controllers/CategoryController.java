@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 public class CategoryController {
 private final CategoryServiceIMPL categoryService;
 
-@GetMapping("/get-all")
+@GetMapping("/get-all-categories")
 public  ResponseEntity<ApiResponse> getAllCategories(){
     try {
         List <Category> categories = categoryService.getAllCategories();
@@ -45,7 +45,7 @@ public  ResponseEntity<ApiResponse> getAllCategories(){
 
 }
 
-@GetMapping("/get-by-id{id}")
+@GetMapping("/get-category-by-id{id}")
 public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
     try { 
         Optional<Category> category = categoryService.getCategoryById(id);
@@ -60,7 +60,7 @@ public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
     
 }
 
-@GetMapping("/get-by-name")
+@GetMapping("/get-by-category-name")
 public ResponseEntity<ApiResponse> getCategoryByName(@RequestParam String name) {
     try {
         Category theName = categoryService.getCategoryByName(name);

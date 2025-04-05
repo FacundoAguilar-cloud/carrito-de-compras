@@ -32,7 +32,7 @@ public class CategoryService implements CategoryServiceIMPL {
 
     @Override
     public Category createCategory(Category category) {
-        return Optional.of(category).filter(c -> !categoryRepository.existByName(c.getName()))
+        return Optional.of(category).filter(c -> !categoryRepository.existsByName(c.getName()))
         .map(categoryRepository:: save).orElseThrow(() -> new RuntimeException("This category already exists"));
     }
     @Override
