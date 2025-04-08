@@ -3,6 +3,8 @@ package com.demo.app.demo_msvc_app.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,7 +34,7 @@ private final ProductServiceIMPL productServiceIMPL;
 public  ResponseEntity<ApiResponse> getAllProducts(){
     try {
         List <Product> products = productServiceIMPL.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("All products retrieved succesfully", null));
+        return ResponseEntity.ok(new ApiResponse("All products retrieved successfully", products));
         
         
     } catch (NoSuchElementException e) {
@@ -68,7 +70,7 @@ public  ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name)
 public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand){
     try {
         List <Product> products = productServiceIMPL.getProductsByBrand(brand);
-        return ResponseEntity.ok(new ApiResponse("All products by brand retrieved succesfully", null));
+        return ResponseEntity.ok(new ApiResponse("All products by brand retrieved succesfully", products));
         
     } catch (NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR));
@@ -77,7 +79,7 @@ public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String bran
 }
 
 
-@GetMapping("/get-product-by-id{id}")
+@GetMapping("/get-product-by-id/{productId}")
 public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
     try { 
         Product product = productServiceIMPL.getProductById(productId);
@@ -104,17 +106,18 @@ public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
 
     }
 
-    @DeleteMapping("/delete-product{id}")
-    public ResponseEntity <ApiResponse> deleteProductById(@PathVariable Long productId){
+  @DeleteMapping("/delete-product/{productId}")
+public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productId) {
     try {
         productServiceIMPL.deleteProduct(productId);
-        
-        return ResponseEntity.ok(new ApiResponse("Cagetory deleted succesfully", null));
-        
+        return ResponseEntity.ok(new ApiResponse("Product deleted successfully", null));
+    } catch (DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse("Cannot delete product: it is linked to other data", null));
     } catch (NoSuchElementException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null)); 
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse("Product not found", null));
     }
-
 }
 
     @PutMapping("update-product/{id}")

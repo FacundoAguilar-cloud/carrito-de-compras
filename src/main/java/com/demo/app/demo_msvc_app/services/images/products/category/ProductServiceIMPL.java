@@ -11,7 +11,7 @@ public interface ProductServiceIMPL {
 List <Product> getAllProducts();
 Product getProductById(Long id);
 Product addProduct(AddProductR product);
-void deleteProduct(Long id);
+void deleteProduct(Long productId);
 Product updateProduct(UpdateProductR product, Long productId);
 List <Product> getProductsByCategory(String category);
 List <Product> getProductsByName(String name);

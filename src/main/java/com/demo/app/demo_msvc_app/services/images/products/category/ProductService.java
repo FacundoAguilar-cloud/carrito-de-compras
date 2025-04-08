@@ -1,6 +1,7 @@
 package com.demo.app.demo_msvc_app.services.images.products.category;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.demo.app.demo_msvc_app.entities.Category;
@@ -58,8 +59,19 @@ public class ProductService implements ProductServiceIMPL {
     }
 
     @Override
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+
+        .orElseThrow(() -> new NoSuchElementException("Product not found"));
+
+        Category category = product.getCategory();
+        if (category != null) {
+            category.getProducts().remove(product);
+            product.setCategory(null);
+            categoryRepository.save(category);
+            
+        }
+        productRepository.delete(product);
         }
 
     @Override

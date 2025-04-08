@@ -3,6 +3,8 @@ package com.demo.app.demo_msvc_app.entities;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +27,8 @@ private String brand;
 private BigDecimal price;
 private int inventory;
 private String description;
-@ManyToOne(cascade = CascadeType.ALL)
+@ManyToOne
+@JsonBackReference
 @JoinColumn(name =  "category_id")
 private Category category;
 //con esto si alguna imagen queda suelta porque un producto se eliminó, sera removida automaticamente y no quedaran datos "huérfanos"
