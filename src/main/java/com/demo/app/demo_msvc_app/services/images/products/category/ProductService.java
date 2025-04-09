@@ -3,10 +3,17 @@ package com.demo.app.demo_msvc_app.services.images.products.category;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import com.demo.app.demo_msvc_app.dto.ImageDto;
+import com.demo.app.demo_msvc_app.dto.ProductDto;
 import com.demo.app.demo_msvc_app.entities.Category;
+import com.demo.app.demo_msvc_app.entities.Image;
 import com.demo.app.demo_msvc_app.entities.Product;
 import com.demo.app.demo_msvc_app.repositories.CategoryRepository;
+import com.demo.app.demo_msvc_app.repositories.ImageRepository;
 import com.demo.app.demo_msvc_app.repositories.ProductRepository;
 import com.demo.app.demo_msvc_app.request.AddProductR;
 import com.demo.app.demo_msvc_app.request.UpdateProductR;
@@ -20,6 +27,8 @@ public class ProductService implements ProductServiceIMPL {
     
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
 
     @Override
     public Product addProduct(AddProductR request) {
@@ -112,6 +121,17 @@ public class ProductService implements ProductServiceIMPL {
     @Override
     public Long countProductsByName(String name) {
        return productRepository.countProductsByName(name);
+    }
+    @Override
+    public ProductDto convertToDto(Product product){
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findById(product.getId())
+            .map(List::of)
+            .orElseGet(List::of);
+        List<ImageDto> imageDtos = images.stream().map(image -> modelMapper.map(images, ImageDto.class)).toList();
+
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 
 }

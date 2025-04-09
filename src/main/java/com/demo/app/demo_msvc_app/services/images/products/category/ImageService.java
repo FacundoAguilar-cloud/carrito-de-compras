@@ -29,35 +29,37 @@ public class ImageService implements ImageServiceIMPL {
        return (List <Image>) imageRepository.findAll();
     }
 
-    @Override
-    public List <ImageDto> saveImage(List <MultipartFile> files, Long productId) {
+    public List<ImageDto> saveImage(List<MultipartFile> files, Long productId) {
         Product product = productService.getProductById(productId);
-        List <ImageDto> imageDtos = new ArrayList<>();
-        for(MultipartFile file: files) {
+        List<ImageDto> imageDtos = new ArrayList<>();
+        
+        for (MultipartFile file : files) {
             try {
                 Image image = new Image();
                 image.setFileName(file.getOriginalFilename());
                 image.setFileType(file.getContentType());
                 image.setImage(file.getBytes());
                 image.setProduct(product);
-                String buildDownloadUrl= "\"/api/v1/images/image/download\"";    
-                String downloadUrl = buildDownloadUrl + image.getId();
-                image.setDownloadUrl(downloadUrl);
-               Image savedImage = imageRepository.save(image);
-
-               imageRepository.save(savedImage);
-               
-               savedImage.setDownloadUrl(buildDownloadUrl + savedImage.getId());
-
-            ImageDto imageDto = new ImageDto();
-            imageDto.setImageId(savedImage.getId());
-            imageDto.setImageName(savedImage.getFileName());
-            imageDto.setDownloadUrL(savedImage.getDownloadUrl());
-            imageDtos.add(imageDto);
+                
+                // Guardamos la imagen para obtener el ID generado
+                Image savedImage = imageRepository.save(image);
+                
+                // Construimos la URL CORRECTA (sin comillas en el path)
+                String downloadUrl = "/api/image-download/" + savedImage.getId(); // ← Coincide con tu @GetMapping
+                savedImage.setDownloadUrl(downloadUrl);
+                
+                // Actualizamos la imagen con la URL completa
+                imageRepository.save(savedImage); // Solo necesario si usas el campo en otras consultas
+                
+                ImageDto imageDto = new ImageDto();
+                imageDto.setId(savedImage.getId());
+                imageDto.setFileName(savedImage.getFileName());
+                imageDto.setDownloadUrL(savedImage.getDownloadUrl());
+                imageDtos.add(imageDto);
+                
             } catch (IOException e) {
-                throw new RuntimeException(e.getMessage());
+                throw new RuntimeException("Error processing file: " + e.getMessage());
             }
-
         }
         return imageDtos;
     }

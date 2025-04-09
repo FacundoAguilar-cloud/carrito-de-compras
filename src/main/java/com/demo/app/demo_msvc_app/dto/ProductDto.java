@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.demo.app.demo_msvc_app.entities.Category;
-import com.demo.app.demo_msvc_app.entities.Image;
 import lombok.Data;
 
 
@@ -17,5 +16,5 @@ private BigDecimal price;
 private int inventory;
 private String description;
 private Category category;
-private List <Image> images;
+private List <ImageDto> images;
 }

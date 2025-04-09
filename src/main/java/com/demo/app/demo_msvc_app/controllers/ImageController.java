@@ -33,8 +33,8 @@ import lombok.RequiredArgsConstructor;
 public class ImageController {
 private final ImageServiceIMPL imageService;
 
-@PostMapping("/upload")
-public ResponseEntity<ApiResponse> saveImage(@RequestParam List<MultipartFile> files, @PathVariable Long productId){
+@PostMapping("/upload-image/{productId}")
+public ResponseEntity<ApiResponse> saveImage(@RequestParam ("files") List<MultipartFile> files, @PathVariable Long productId){
     try {
         List <ImageDto> imagesDtos = imageService.saveImage(files, productId);
         return ResponseEntity.ok(new ApiResponse("Upload Succesfully!", imagesDtos));
@@ -43,7 +43,8 @@ public ResponseEntity<ApiResponse> saveImage(@RequestParam List<MultipartFile> f
     }
    
 }
-@GetMapping("/image-download{imageId}")
+
+@GetMapping("/image-download/{imageId}")
 public ResponseEntity<ByteArrayResource> download(@PathVariable Long imageId){
     Image image = imageService.getImageById(imageId);
     ByteArrayResource resource = new ByteArrayResource(image.getImage());
