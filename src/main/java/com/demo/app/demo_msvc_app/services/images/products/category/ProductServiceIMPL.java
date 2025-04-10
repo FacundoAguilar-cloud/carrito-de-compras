@@ -18,5 +18,6 @@ List <Product> getProductsByName(String name);
 List <Product> getProductsByBrand(String brand);
 Long countProductsByName(String name);
 ProductDto convertToDto(Product product);
+List <ProductDto> productsConverted(List <Product> products);
 
 }

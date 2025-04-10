@@ -134,4 +134,9 @@ public class ProductService implements ProductServiceIMPL {
         return productDto;
     }
 
+    @Override
+    public List <ProductDto> productsConverted(List<Product> products){
+        return products.stream().map(this::convertToDto).toList();
+    }
+
 }

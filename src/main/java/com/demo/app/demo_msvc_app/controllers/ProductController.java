@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.demo.app.demo_msvc_app.dto.ProductDto;
 import com.demo.app.demo_msvc_app.entities.Product;
 import com.demo.app.demo_msvc_app.exceptions.AlreadyExistExcp;
 import com.demo.app.demo_msvc_app.request.AddProductR;
@@ -24,6 +26,7 @@ import com.demo.app.demo_msvc_app.response.ApiResponse;
 import com.demo.app.demo_msvc_app.services.images.products.category.ProductServiceIMPL;
 
 import lombok.RequiredArgsConstructor;
+import lombok.var;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,8 +36,10 @@ private final ProductServiceIMPL productServiceIMPL;
 @GetMapping("/get-all-products")
 public  ResponseEntity<ApiResponse> getAllProducts(){
     try {
+        //dejamos de trabajar con la entidad para usar el DTO
         List <Product> products = productServiceIMPL.getAllProducts();
-        return ResponseEntity.ok(new ApiResponse("All products retrieved successfully", products));
+        List <ProductDto> convertedProducts = productServiceIMPL.productsConverted(products);
+        return ResponseEntity.ok(new ApiResponse("All products retrieved successfully", convertedProducts));
         
         
     } catch (NoSuchElementException e) {
@@ -46,7 +51,8 @@ public  ResponseEntity<ApiResponse> getAllProducts(){
 public  ResponseEntity<ApiResponse> getProductsByCategory(@RequestParam String category){
     try {
         List <Product> products = productServiceIMPL.getProductsByCategory(category);
-        return ResponseEntity.ok(new ApiResponse("All products by category retrieved succesfully", null));
+        List <ProductDto> convertedProducts = productServiceIMPL.productsConverted(products);
+        return ResponseEntity.ok(new ApiResponse("All products by category retrieved succesfully", convertedProducts));
         
         
     } catch (NoSuchElementException e) {
@@ -58,7 +64,8 @@ public  ResponseEntity<ApiResponse> getProductsByCategory(@RequestParam String c
 public  ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name){
     try {
         List <Product> products = productServiceIMPL.getProductsByName(name);
-        return ResponseEntity.ok(new ApiResponse("All products by name retrieved succesfully", null));
+        List <ProductDto> convertedProducts = productServiceIMPL.productsConverted(products);
+        return ResponseEntity.ok(new ApiResponse("All products by name retrieved succesfully", convertedProducts));
         
         
     } catch (NoSuchElementException e) {
@@ -70,7 +77,8 @@ public  ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name)
 public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String brand){
     try {
         List <Product> products = productServiceIMPL.getProductsByBrand(brand);
-        return ResponseEntity.ok(new ApiResponse("All products by brand retrieved succesfully", products));
+        List <ProductDto> convertedProducts = productServiceIMPL.productsConverted(products);
+        return ResponseEntity.ok(new ApiResponse("All products by brand retrieved succesfully", convertedProducts));
         
     } catch (NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR));
@@ -83,7 +91,8 @@ public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String bran
 public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
     try { 
         Product product = productServiceIMPL.getProductById(productId);
-        return ResponseEntity.ok(new ApiResponse("Product retrieved succesfully", product));
+        ProductDto productDto = productServiceIMPL.convertToDto(product);
+        return ResponseEntity.ok(new ApiResponse("Product retrieved succesfully", productDto));
        }
         catch (NoSuchElementException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Category not found, please try again", Map.of("requestedId", productId)));
@@ -96,7 +105,8 @@ public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) 
 public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
        try {
           Product product = productServiceIMPL.addProduct(name);
-          return ResponseEntity.ok(new ApiResponse("Product added succesfully!", null));
+          ProductDto productDto = productServiceIMPL.convertToDto(product);
+          return ResponseEntity.ok(new ApiResponse("Product added succesfully!", productDto));
         }
         
         catch (AlreadyExistExcp e) {
@@ -124,7 +134,8 @@ public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productI
 public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductR product) {
    try {
     Product updatedProduct = productServiceIMPL.updateProduct(product, productId);
-    return ResponseEntity.ok(new ApiResponse("Product updated succesfulyy", null));
+    ProductDto productDto = productServiceIMPL.convertToDto(updatedProduct);
+    return ResponseEntity.ok(new ApiResponse("Product updated succesfulyy", productDto));
    } catch (NoSuchElementException e) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
    }
