@@ -1,6 +1,7 @@
 package com.demo.app.demo_msvc_app.entities;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -37,4 +38,6 @@ public void setTotalPrice (){
 this.totalPrice = product.getPrice().multiply(new BigDecimal(quantity));
 
 }
+
+
 }
