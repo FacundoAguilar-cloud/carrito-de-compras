@@ -1,5 +1,6 @@
 package com.demo.app.demo_msvc_app.cart;
 
+import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -51,18 +52,36 @@ public class CartItemService implements CartItemServiceIMPL {
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         Cart cart = cartServiceIMPL.getCartById(cartId);
-        CartItem itemToRemove = cart
-        .getCartItems()
-        .stream()
-        .filter(item -> item.getProduct().getId().equals(productId)).findFirst().orElseThrow(() -> new NoSuchElementException("Product not found"));
+        CartItem itemToRemove = getCartItem(cartId, productId);
         cart.removeItem(itemToRemove);
         cartRepository.save(cart);
     }
 
     @Override
-    public void updateItemQuantity(Long carId, int quantity, Long productId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateItemQuantity'");
+    public void updateItemQuantity(Long cartId, int quantity, Long productId) {
+        Cart cart = cartServiceIMPL.getCartById(cartId);
+        cart.getCartItems().stream()
+        .filter(item -> item.getProduct().getId().equals(productId))
+        .findFirst()
+        .ifPresent(item ->{
+            item.setQuantity(quantity);
+            item.setPricePerUnit(item.getProduct().getPrice());
+            item.setTotalPrice();
+        });
+        BigDecimal totalAmount = cart.getTotalAmount();
+        
+        cart.setTotalAmount(totalAmount);
+
+        cartRepository.save(cart);
+    }
+    @Override
+    public CartItem getCartItem(Long cartId, Long productId){
+        Cart cart = cartServiceIMPL.getCartById(cartId);
+
+        return cart.getCartItems()
+        .stream()
+        .filter(item -> item.getProduct().getId().equals(productId)).findFirst().orElseThrow(() -> new NoSuchElementException("Item not found"));
+        
     }
 
 }
