@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.demo.app.demo_msvc_app.cart.CartItemServiceIMPL;
+import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class CartItemController {
 private final CartItemServiceIMPL cartItemServiceIMPL;
+private final CartServiceIMPL cartServiceIMPL;
 
 @PostMapping("/add-item-to-cart")
 public ResponseEntity <ApiResponse> addItemToCart(
@@ -29,6 +31,9 @@ public ResponseEntity <ApiResponse> addItemToCart(
     @RequestParam Long productId,
     @RequestParam Integer quantity){
     try {
+        if (cartId == null) {
+          cartId =  cartServiceIMPL.generateNewCart(); 
+        }
         cartItemServiceIMPL.addItemToCart(cartId, productId, quantity);
     return ResponseEntity.ok(new ApiResponse("Item added successfully", null));  
 
@@ -38,10 +43,10 @@ public ResponseEntity <ApiResponse> addItemToCart(
     
 }
 
-@DeleteMapping("/remove-item-from-cart")
-public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long productId){
+@DeleteMapping("/remove-item-from-cart/{itemId}/{cartId}")
+public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId){
  try {
-    cartItemServiceIMPL.removeItemFromCart(cartId, productId);
+    cartItemServiceIMPL.removeItemFromCart(cartId, itemId);
     return ResponseEntity.ok(new ApiResponse("Item removed successfully", null));  
  } catch (ElementsNotFoundException e) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -49,9 +54,17 @@ public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId
  
 }
 
-@PutMapping("path/{id}")
-public ResponseEntity <ApiResponse> updateItemQuantity(@RequestParam Long cartId, @RequestParam Long productId, @RequestParam Integer quantity ) {
-    return ResponseEntity.ok(new ApiResponse(null, quantity));
+@PutMapping("/update-item-quantity/{cartId}/{itemId}")
+public ResponseEntity <ApiResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam Integer quantity ) {
+    try {
+        cartItemServiceIMPL.updateItemQuantity(cartId, quantity, itemId);
+
+        return ResponseEntity.ok(new ApiResponse("Updated item successfully", null));
+    } 
+    catch (ElementsNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+    }
+    
 }
 
 }

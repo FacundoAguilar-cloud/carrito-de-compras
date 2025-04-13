@@ -12,6 +12,8 @@ BigDecimal getTotalAmount(Long id);
 
 void clearCart(Long id);
 
+Long generateNewCart();
+
 
 
 }
