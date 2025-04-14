@@ -4,12 +4,15 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +25,8 @@ public class Cart {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
 private Long id;
 private BigDecimal totalAmount = BigDecimal.ZERO;
+@Version
+private Integer version = 0;
 //con esto si eliminamos un carro, se van a eliminar todos los productos que estén dentro de el.
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set <CartItem> cartItems;

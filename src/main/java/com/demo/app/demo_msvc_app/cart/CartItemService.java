@@ -29,7 +29,9 @@ public class CartItemService implements CartItemServiceIMPL {
        CartItem cartItem = cart
        .getCartItems()
        .stream()
-       .filter(item -> item.equals(productId)).findFirst().orElse(new CartItem());
+       .filter(item -> item.getProduct().getId().equals(productId))
+       .findFirst()
+       .orElse(new CartItem());
        //4 si está, incrementa la cantidad según se necesite
        if (cartItem.getId() == null) {
         cartItem.setCart(cart);

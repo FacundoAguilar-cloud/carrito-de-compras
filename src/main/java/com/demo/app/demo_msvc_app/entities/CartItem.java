@@ -1,9 +1,8 @@
 package com.demo.app.demo_msvc_app.entities;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
-import jakarta.persistence.CascadeType;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,7 +29,7 @@ private BigDecimal totalPrice;
 @JoinColumn(name = "product_id") //muchos items del cart pueden pertenecer a un producto, por eso la relacion
 private Product product;
 
-@ManyToOne(cascade = CascadeType.ALL)
+@ManyToOne
 @JoinColumn(name = "cart_id")
 private Cart cart;
 

@@ -12,16 +12,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CartService implements CartServiceIMPL {
-    private final CartItemServiceIMPL cartItemServiceIMPL;
+    
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final AtomicLong cartIdGenerator = new AtomicLong(0);
 
-    CartService(CartItemService cartItemService) {
-        this.cartItemServiceIMPL = cartItemService;
-        this.cartRepository = null;
-        this.cartItemRepository = null;
-    }
+ 
     @Override
     public Cart getCartById(Long id) {
         Cart cart = cartRepository.findById(id)
