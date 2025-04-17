@@ -1,6 +1,7 @@
 package com.demo.app.demo_msvc_app.entities;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,8 +30,15 @@ private BigDecimal totalAmount = BigDecimal.ZERO;
 private Integer version = 0;
 //con esto si eliminamos un carro, se van a eliminar todos los productos que estén dentro de el.
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-private Set <CartItem> cartItems;
- 
+private Set <CartItem> cartItems = new HashSet<>();
+ //esto vendria a ser una especie de "getter seguro" lo cual nos va a hacer evitar el NPE
+public Set<CartItem> getCartItems() {
+    if (this.cartItems == null) {
+        this.cartItems = new HashSet<>();
+    }
+    return Collections.unmodifiableSet(this.cartItems);
+}
+
 
 public void addItemToCart(CartItem cartItem) {
         if (this.cartItems == null) {
