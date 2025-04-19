@@ -16,11 +16,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"cartItems"})
 public class Cart {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,10 +43,9 @@ public Set<CartItem> getCartItems() {
 
 
 public void addItemToCart(CartItem cartItem) {
-        if (this.cartItems == null) {
-            this.cartItems = new HashSet<>();
-        }
         this.cartItems.add(cartItem);
+        cartItem.setCart(this);
+        updateTotalAmount();
     }
 
 public void removeItem(CartItem items){

@@ -9,5 +9,5 @@ public interface CartItemServiceIMPL {
 
     void updateItemQuantity(Long cartId, int quantity, Long productId);
 
-    public CartItem getCartItem(Long cartId, Long productId);
+    CartItem getCartItem(Long cartId, Long productId);
 }

@@ -14,7 +14,6 @@ import com.demo.app.demo_msvc_app.repositories.CartRepository;
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CartService implements CartServiceIMPL {
     
     private final CartRepository cartRepository;
@@ -49,6 +48,8 @@ public class CartService implements CartServiceIMPL {
     @Override
     public Long generateNewCart(){
         Cart newCart = new Cart();
+        Long newCarId = cartIdGenerator.incrementAndGet();
+        newCart.setId(newCarId);
         return cartRepository.save(newCart).getId();
     }
  

@@ -12,12 +12,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@EqualsAndHashCode(exclude = {"cart"})
 public class CartItem {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
