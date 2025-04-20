@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.entities.CartItem;
 import com.demo.app.demo_msvc_app.entities.Product;
@@ -14,6 +16,7 @@ import com.demo.app.demo_msvc_app.services.images.products.category.ProductServi
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartItemService implements CartItemServiceIMPL {
     private final  CartItemRepository cartItemRepository;
     private final ProductServiceIMPL productServiceIMPL;
@@ -26,29 +29,27 @@ public class CartItemService implements CartItemServiceIMPL {
        //2 obtener el producto
         Product product = productServiceIMPL.getProductById(productId);
        //3 chequear si el producto ya está en el carro
-       CartItem cartItem = cart
-       .getCartItems()
-       .stream()
-       .filter(item -> item.getProduct().getId().equals(productId))
-       .findFirst()
-       .orElse(new CartItem());
-       //4 si está, incrementa la cantidad según se necesite
-       if (cartItem.getId() == null) {
-        cartItem.setCart(cart);
-        cartItem.setProduct(product);
-        cartItem.setQuantity(quantity);
-        cartItem.setPricePerUnit(product.getPrice());
+       cart.getCartItems().stream()
+            .filter(item -> item.getProduct().getId().equals(productId))
+            .findFirst()
+            .ifPresentOrElse(
+                existingItem -> {
+                    existingItem.increaseQuantity(quantity);
+                    existingItem.updateTotalPrice();
+                },
+                () -> {
+                    CartItem newItem = CartItem.builder()
+                        .cart(cart)
+                        .product(product)
+                        .quantity(quantity)
+                        .pricePerUnit(product.getPrice())
+                        .build();
+                    newItem.updateTotalPrice();
+                    cart.addItemToCart(newItem);
+                }
+            );
         
-    }
-       else{
-        cartItem.setQuantity(cartItem.getQuantity() + quantity);
-       }
-       cartItem.setTotalPrice();
-       cart.addItemToCart(cartItem);
-       cartItemRepository.save(cartItem);
-       cartRepository.save(cart);
-
-       //5 si no está, entonces "inciar" una entrada nueva de item al carro
+        cart.updateTotalAmount(); 
     }
 
     @Override
@@ -70,7 +71,9 @@ public class CartItemService implements CartItemServiceIMPL {
             item.setPricePerUnit(item.getProduct().getPrice());
             item.setTotalPrice();
         });
-        BigDecimal totalAmount = cart.getTotalAmount();
+        BigDecimal totalAmount = cart.getCartItems().stream()
+        .map(CartItem:: getTotalPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         cart.setTotalAmount(totalAmount);
 

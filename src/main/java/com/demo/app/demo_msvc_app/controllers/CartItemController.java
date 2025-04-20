@@ -54,7 +54,7 @@ public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId
  }
  
 }
-
+//funciona ok
 @PutMapping("/update-item-quantity/{cartId}/{itemId}")
 public ResponseEntity <ApiResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam Integer quantity ) {
     try {

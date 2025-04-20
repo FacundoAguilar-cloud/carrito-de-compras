@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @EqualsAndHashCode(exclude = {"cart"})
+@Builder
 public class CartItem {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +41,13 @@ private Cart cart;
 public void setTotalPrice (){
 this.totalPrice = product.getPrice().multiply(new BigDecimal(quantity));
 
+}
+public void updateTotalPrice() {
+    this.totalPrice = pricePerUnit.multiply(BigDecimal.valueOf(quantity));
+}
+
+public void increaseQuantity(int quantity) {
+    this.quantity += quantity;
 }
 
 

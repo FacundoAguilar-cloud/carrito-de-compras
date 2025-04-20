@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,8 +51,9 @@ public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
                 .body(new ApiResponse("Error retrieving cart: " + e.getMessage(), null));
     }
 }
-//TAMBIEN FUNCIONA OK
+//revisar despues, hay algo que no deja vaciar los carros, da una excepcion
 @DeleteMapping("/clear-cart-by-id/{cartId}")
+@Transactional
 public ResponseEntity <ApiResponse> clearCart(@PathVariable Long cartId){
 try {
     cartServiceIMPL.clearCart(cartId);

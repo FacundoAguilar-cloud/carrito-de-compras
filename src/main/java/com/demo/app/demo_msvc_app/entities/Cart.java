@@ -1,7 +1,6 @@
 package com.demo.app.demo_msvc_app.entities;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -34,12 +34,7 @@ private Integer version = 0;
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set <CartItem> cartItems = new HashSet<>();
  //esto vendria a ser una especie de "getter seguro" lo cual nos va a hacer evitar el NPE
-public Set<CartItem> getCartItems() {
-    if (this.cartItems == null) {
-        this.cartItems = new HashSet<>();
-    }
-    return Collections.unmodifiableSet(this.cartItems);
-}
+
 
 
 public void addItemToCart(CartItem cartItem) {
@@ -55,7 +50,7 @@ public void removeItem(CartItem items){
 
 }    
 
-private void updateTotalAmount() {
+public void updateTotalAmount() {
     this.totalAmount = cartItems.stream().map(item -> {
         BigDecimal unitPrice = item.getPricePerUnit();
         if (unitPrice == null) {
