@@ -22,7 +22,7 @@ public class CartService implements CartServiceIMPL {
     @Transactional(readOnly = true)
     public Cart getCartById(Long id) {
         return cartRepository.findById(id)
-        .orElseThrow(() -> new ElementsNotFoundException());
+        .orElseThrow(() -> new ElementsNotFoundException("Cart not found"));
         
     }
 
