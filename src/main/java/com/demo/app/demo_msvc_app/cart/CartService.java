@@ -46,6 +46,12 @@ public class CartService implements CartServiceIMPL {
         
         return cartRepository.save(newCart).getId();
     }
+
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findById(userId)
+        .orElseThrow(() -> new ElementsNotFoundException("Cart by userId not found, please try again"));
+    }
  
     
 

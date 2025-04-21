@@ -14,6 +14,8 @@ void clearCart(Long id);
 
 Long generateNewCart();
 
+Cart getCartByUserId(Long userId);
+
 
 
 }
