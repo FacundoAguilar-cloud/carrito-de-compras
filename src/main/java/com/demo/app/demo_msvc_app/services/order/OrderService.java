@@ -75,8 +75,8 @@ public class OrderService implements OrderServiceIMPL {
     }
     @Override
     public List <Order> getUserOrders(Long userId){
-        return orderRepository.findById(userId)
-        .orElseThrow(() -> new ElementsNotFoundException(""))
+        return (List<Order>) orderRepository.findById(userId)
+        .orElseThrow(() -> new ElementsNotFoundException("Order not found"));
     }
 
 }

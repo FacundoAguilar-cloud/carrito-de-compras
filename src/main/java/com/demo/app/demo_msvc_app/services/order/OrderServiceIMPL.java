@@ -1,5 +1,7 @@
 package com.demo.app.demo_msvc_app.services.order;
 
+import java.util.List;
+
 import com.demo.app.demo_msvc_app.entities.Order;
 
 public interface OrderServiceIMPL {
@@ -7,4 +9,6 @@ public interface OrderServiceIMPL {
  Order placeOrder(Long userId);
 
  Order getOrder(Long orderId);
+
+ List<Order> getUserOrders(Long userId);
 }
