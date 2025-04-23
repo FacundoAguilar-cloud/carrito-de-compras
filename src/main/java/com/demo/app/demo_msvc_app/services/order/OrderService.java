@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
+import com.demo.app.demo_msvc_app.dto.OrderDto;
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.entities.Order;
 import com.demo.app.demo_msvc_app.entities.OrderItem;
@@ -24,6 +26,7 @@ public class OrderService implements OrderServiceIMPL {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartServiceIMPL cartService;
+    private final ModelMapper modelMapper;
     @Override
     public Order placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
@@ -40,8 +43,9 @@ public class OrderService implements OrderServiceIMPL {
     }
 
     @Override
-    public Order getOrder(Long orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() -> new ElementsNotFoundException("Order not found"));
+    public OrderDto getOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ElementsNotFoundException("Order not found"));
+        return convertToDto(order);
     }
 
 
@@ -74,9 +78,13 @@ public class OrderService implements OrderServiceIMPL {
         return orderItems.stream().map(item -> item.getPrice().multiply(new BigDecimal(item.getQuantity()))).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     @Override
-    public List <Order> getUserOrders(Long userId){
-        return (List<Order>) orderRepository.findById(userId)
+    public List <OrderDto> getUserOrders(Long userId){
+        return (List<OrderDto>) orderRepository.findById(userId)
         .orElseThrow(() -> new ElementsNotFoundException("Order not found"));
+    }
+
+    private OrderDto convertToDto(Order order){
+        return modelMapper.map(order, OrderDto.class);
     }
 
 }
