@@ -8,15 +8,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.demo.app.demo_msvc_app.dto.UserDto;
 import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.AlreadyExistExcp;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.request.NewUserR;
+import com.demo.app.demo_msvc_app.request.UpdateUserR;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
 import com.demo.app.demo_msvc_app.services.user.UserServiceIMPL;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -30,7 +35,8 @@ private final UserServiceIMPL userService;
 public ResponseEntity <ApiResponse> getUserById(@PathVariable Long userId){
     try {
         User user = userService.getUserById(userId);
-        return ResponseEntity.ok(new ApiResponse("User retrieved successfully", user));
+        UserDto userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new ApiResponse("User retrieved successfully", userDto));
     } catch (ElementsNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
     }
@@ -42,7 +48,8 @@ public ResponseEntity <ApiResponse> getUserById(@PathVariable Long userId){
 public ResponseEntity <ApiResponse> createNewUser (NewUserR request) {
 try {
     User user = userService.createUser(request);
-return ResponseEntity.ok(new ApiResponse("User created successfully", user)); 
+    UserDto userDto = userService.convertToDto(user);
+return ResponseEntity.ok(new ApiResponse("User created successfully", userDto)); 
 } catch (AlreadyExistExcp e) {
     return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse("User already exist", null));
 }
@@ -54,9 +61,21 @@ return ResponseEntity.ok(new ApiResponse("User created successfully", user));
 @DeleteMapping("/delete-user/{userId}")
 public ResponseEntity <ApiResponse> deleteUser(@PathVariable Long userId){
     try {
-        User user = userService.getUserById(userId);
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
+         userService.deleteUserById(userId);
+        return ResponseEntity.ok(new ApiResponse("User deleted", null));
+    } catch (ElementsNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse("User alredy been deleted or do not exist", null));
+    }
+}
+
+@PutMapping("update-user/{userId}")
+public ResponseEntity<ApiResponse> updateUser(@PathVariable Long userId, @RequestBody UpdateUserR request) {
+    try {
+        User user = userService.updateUser(request, userId);
+        UserDto userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new ApiResponse("User updated successfully", userDto));
+    } catch (ElementsNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred", null));
     }
 }
 

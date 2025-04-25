@@ -2,8 +2,10 @@ package com.demo.app.demo_msvc_app.services.user;
 
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.demo.app.demo_msvc_app.dto.UserDto;
 import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.AlreadyExistExcp;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService implements UserServiceIMPL {
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -48,5 +51,10 @@ public class UserService implements UserServiceIMPL {
     public void deleteUserById(Long userId) {
         userRepository.findById(userId).ifPresentOrElse(userRepository::delete, ()-> new ElementsNotFoundException("User not found"));
     }
+    public UserDto convertToDto(User user){
+        return modelMapper.map(user, UserDto.class);
+    }
+
+
 
 }
