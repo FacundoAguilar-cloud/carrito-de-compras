@@ -27,8 +27,8 @@ private String brand;
 private BigDecimal price;
 private int inventory;
 private String description;
-@ManyToOne
-@JsonBackReference
+
+@ManyToOne(cascade = CascadeType.ALL)
 @JoinColumn(name =  "category_id")
 private Category category;
 //con esto si alguna imagen queda suelta porque un producto se eliminó, sera removida automaticamente y no quedaran datos "huérfanos"

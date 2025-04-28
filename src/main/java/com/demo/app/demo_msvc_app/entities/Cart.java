@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -36,7 +36,7 @@ private Integer version = 0;
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set <CartItem> cartItems = new HashSet<>();
  //esto vendria a ser una especie de "getter seguro" lo cual nos va a hacer evitar el NPE
-@OneToOne
+@OneToOne    
 @JoinColumn(name = "user_id")
  private User user;
 
@@ -64,6 +64,7 @@ public void updateTotalAmount() {
         return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
     }).reduce(BigDecimal.ZERO, BigDecimal::add);
 }
+
 
 
 

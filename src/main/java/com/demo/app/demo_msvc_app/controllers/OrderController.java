@@ -31,6 +31,7 @@ private final OrderServiceIMPL orderService;
 public ResponseEntity <ApiResponse> createOrder(Long userId) {
 try {
     Order order = orderService.placeOrder(userId);
+    OrderDto orderDto = orderService.convertToDto(order);
 return ResponseEntity.ok(new ApiResponse("Order generated successfully", order));
 
 } catch (Exception e) {

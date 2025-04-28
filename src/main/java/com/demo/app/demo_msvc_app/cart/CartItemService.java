@@ -29,27 +29,23 @@ public class CartItemService implements CartItemServiceIMPL {
        //2 obtener el producto
         Product product = productServiceIMPL.getProductById(productId);
        //3 chequear si el producto ya está en el carro
-       cart.getCartItems().stream()
-            .filter(item -> item.getProduct().getId().equals(productId))
-            .findFirst()
-            .ifPresentOrElse(
-                existingItem -> {
-                    existingItem.increaseQuantity(quantity);
-                    existingItem.updateTotalPrice();
-                },
-                () -> {
-                    CartItem newItem = CartItem.builder()
-                        .cart(cart)
-                        .product(product)
-                        .quantity(quantity)
-                        .pricePerUnit(product.getPrice())
-                        .build();
-                    newItem.updateTotalPrice();
-                    cart.addItemToCart(newItem);
-                }
-            );
-        
-        cart.updateTotalAmount(); 
+       CartItem cartItem = cart.getCartItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst().orElse(new CartItem());
+        if (cartItem.getId() == null) {
+            cartItem.setCart(cart);
+            cartItem.setProduct(product);
+            cartItem.setQuantity(quantity);
+            cartItem.setPricePerUnit((product.getPrice()));
+        }
+        else {
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+        }
+        cartItem.setTotalPrice();
+        cart.addItemToCart(cartItem);
+        cartItemRepository.save(cartItem);
+        cartRepository.save(cart);
     }
 
     @Override

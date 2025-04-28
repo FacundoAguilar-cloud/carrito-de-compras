@@ -83,7 +83,7 @@ public class OrderService implements OrderServiceIMPL {
         .orElseThrow(() -> new ElementsNotFoundException("Order not found"));
     }
 
-    private OrderDto convertToDto(Order order){
+    public OrderDto convertToDto(Order order){
         return modelMapper.map(order, OrderDto.class);
     }
 

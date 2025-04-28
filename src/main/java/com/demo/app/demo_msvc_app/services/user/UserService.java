@@ -27,7 +27,7 @@ public class UserService implements UserServiceIMPL {
 
     @Override
     public User createUser(NewUserR request) {
-       return Optional.of(request).filter(user -> !userRepository.existByEmail(request.getEmail()))
+       return Optional.of(request).filter(user -> !userRepository.existsByEmail(request.getEmail()))
        .map(req -> {
         User user = new User();
         user.setEmail(request.getEmail());
