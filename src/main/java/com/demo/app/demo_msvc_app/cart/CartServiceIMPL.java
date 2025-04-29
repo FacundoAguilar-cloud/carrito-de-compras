@@ -16,7 +16,9 @@ void clearCart(Long id);
 
 Cart getCartByUserId(Long userId);
 
-Long initalizeNewCart();
+Long initalizeNewCart(Long userId);
+
+void validateCartOwner(Long cartId, Long userId);
 
 
 

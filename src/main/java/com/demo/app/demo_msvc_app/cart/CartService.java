@@ -1,11 +1,12 @@
 package com.demo.app.demo_msvc_app.cart;
 
 import java.math.BigDecimal;
-import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.demo.app.demo_msvc_app.entities.Cart;
+import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
+import com.demo.app.demo_msvc_app.exceptions.UnauthorizedAccessException;
 import com.demo.app.demo_msvc_app.repositories.CartItemRepository;
 import com.demo.app.demo_msvc_app.repositories.CartRepository;
 import com.demo.app.demo_msvc_app.repositories.UserRepository;
@@ -17,7 +18,7 @@ public class CartService implements CartServiceIMPL {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
-    private final AtomicLong cartIdGenerator = new AtomicLong(0);
+  
     
 
  
@@ -58,11 +59,28 @@ public class CartService implements CartServiceIMPL {
     }
 
     @Override
-    public Long initalizeNewCart() {
+    public Long initalizeNewCart(Long userId) {
+        //vamos a buscar el usuario para asignarselo
+        User user = userRepository.findById(userId)
+        .orElseThrow(()-> new ElementsNotFoundException(""));
+        
+        
         Cart newCart = new Cart();
-        Long newCartId = cartIdGenerator.incrementAndGet();
-        newCart.setId(newCartId);
-        return cartRepository.save(newCart).getId();
+        newCart.setVersion(0);
+        newCart.setUser(user);
+       
+        Cart savedCart = cartRepository.save(newCart);
+
+        return savedCart.getId();
+    }
+    @Override
+    public void validateCartOwner(Long cartId, Long userId) {
+        Cart cart = cartRepository.findById(cartId)
+            .orElseThrow(() -> new ElementsNotFoundException("Cart not found"));
+        
+        if (!cart.getUser().getId().equals(userId)) {
+            throw new UnauthorizedAccessException("Cart does not belong to the user");
+        }
     }
 
    

@@ -2,7 +2,7 @@ package com.demo.app.demo_msvc_app.entities;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -23,7 +23,7 @@ public class Category {
 private Long id;
 private String name;
 @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-@JsonManagedReference
+@JsonIgnore
 private List <Product> products;
 
 public Category(String name) {
