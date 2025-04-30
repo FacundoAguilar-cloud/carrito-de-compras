@@ -1,5 +1,7 @@
 package com.demo.app.demo_msvc_app.entities;
 
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.app.demo_msvc_app.dto.OrderDto;
@@ -26,13 +27,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class OrderController {
-private final OrderServiceIMPL orderService;
+private final OrderServiceIMPL orderService; 
+
 @PostMapping("/create-order")
-public ResponseEntity <ApiResponse> createOrder(Long userId) {
+public ResponseEntity <ApiResponse> createOrder(@RequestParam Long userId) {
 try {
     Order order = orderService.placeOrder(userId);
     OrderDto orderDto = orderService.convertToDto(order);
-return ResponseEntity.ok(new ApiResponse("Order generated successfully", order));
+return ResponseEntity.ok(new ApiResponse("Order generated successfully", orderDto));
 
 } catch (Exception e) {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occured, please try again", e.getMessage()));

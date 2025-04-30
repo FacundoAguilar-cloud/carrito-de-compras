@@ -1,8 +1,12 @@
 package com.demo.app.demo_msvc_app.cart;
 
 import java.math.BigDecimal;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.demo.app.demo_msvc_app.dto.CartDto;
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
@@ -18,6 +22,7 @@ public class CartService implements CartServiceIMPL {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
   
     
 
@@ -81,6 +86,10 @@ public class CartService implements CartServiceIMPL {
         if (!cart.getUser().getId().equals(userId)) {
             throw new UnauthorizedAccessException("Cart does not belong to the user");
         }
+    }
+
+     public CartDto convertToDto(Cart cart){
+        return modelMapper.map(cart, CartDto.class);
     }
 
    

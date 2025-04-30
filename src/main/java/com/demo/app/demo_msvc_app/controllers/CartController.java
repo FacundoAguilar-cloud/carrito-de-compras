@@ -2,7 +2,7 @@ package com.demo.app.demo_msvc_app.controllers;
 
 
 import java.math.BigDecimal;
-import java.util.Map;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
+import com.demo.app.demo_msvc_app.dto.CartDto;
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
@@ -26,32 +27,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartController {
 private final CartServiceIMPL cartServiceIMPL;
-//ESTE FUNCA
+//funciona correctamente con el cambio del DTO
 @GetMapping("/get-cart-by-id/{cartId}")
 public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
     try {   
         Cart cart = cartServiceIMPL.getCartById(cartId);
-        return ResponseEntity.ok(
-            new ApiResponse(
-                "Cart retrieved successfully", 
-                Map.of(
-                    "cart", cart,
-                    "metadata", Map.of(
-                        "itemCount", cart.getCartItems().size(),
-                        "totalAmount", cart.getTotalAmount()
-                    )
-                )
-            )
-        );
+        CartDto cartDto = cartServiceIMPL.convertToDto(cart);
+        return ResponseEntity.ok(new ApiResponse("Cart retrieved successfully", cartDto));
+            
+            
     } catch (ElementsNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiResponse(e.getMessage(), null));
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse("Error retrieving cart: " + e.getMessage(), null));
     }
 }
-//revisar despues, hay algo que no deja vaciar los carros, da una excepcion
+//funciona perfecto
 @DeleteMapping("/clear-cart-by-id/{cartId}")
 @Transactional
 public ResponseEntity <ApiResponse> clearCart(@PathVariable Long cartId){
