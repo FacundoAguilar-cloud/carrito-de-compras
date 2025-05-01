@@ -3,8 +3,13 @@ package com.demo.app.demo_msvc_app.entities;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,15 +21,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"cartItems"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Cart {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
+@EqualsAndHashCode.Include
+@ToString.Include
 private Long id;
 private BigDecimal totalAmount = BigDecimal.ZERO;
 @Version
@@ -33,20 +42,31 @@ private Integer version;
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
 private Set <CartItem> cartItems = new HashSet<>();
  //esto vendria a ser una especie de "getter seguro" lo cual nos va a hacer evitar el NPE
-@OneToOne    
-@JoinColumn(name = "user_id")
- private User user;
 
+ @OneToOne(fetch = FetchType.LAZY)  
+@JoinColumn(name = "user_id")
+@ToString.Exclude
+@JsonIgnore
+private User user;
+
+
+
+public Set<CartItem> getCartItems() {
+    if (this.cartItems == null) {
+        this.cartItems = new HashSet<>();
+    }
+    return this.cartItems;
+}
 
 
 public void addItemToCart(CartItem cartItem) {
-        this.cartItems.add(cartItem);
+        getCartItems().add(cartItem);
         cartItem.setCart(this);
         updateTotalAmount();
     }
 
 public void removeItem(CartItem items){
-    this.cartItems.remove(items);
+    getCartItems().remove(items);
     items.setCart(null);
     updateTotalAmount();
 
