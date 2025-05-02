@@ -13,6 +13,7 @@ import com.demo.app.demo_msvc_app.dto.OrderDto;
 import com.demo.app.demo_msvc_app.entities.Order;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
+import com.demo.app.demo_msvc_app.response.OrderResponseDTO;
 import com.demo.app.demo_msvc_app.services.order.OrderServiceIMPL;
 
 import lombok.RequiredArgsConstructor;
@@ -30,13 +31,13 @@ public class OrderController {
 private final OrderServiceIMPL orderService; 
 
 @PostMapping("/create-order")
-public ResponseEntity <ApiResponse> createOrder(@RequestParam Long userId) {
+public ResponseEntity <OrderResponseDTO> createOrder(@RequestParam Long userId) {
 try {
     Order order = orderService.placeOrder(userId);
-return ResponseEntity.ok(new ApiResponse("Order generated successfully", order));
+return ResponseEntity.ok(new OrderResponseDTO("Order generated successfully", order));
 
 } catch (Exception e) {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occured, please try again", e.getMessage()));
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new OrderResponseDTO("An error occured, please try again", e.getMessage()));
 }
 
 }

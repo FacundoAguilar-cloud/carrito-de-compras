@@ -2,23 +2,27 @@ package com.demo.app.demo_msvc_app.services.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
 import com.demo.app.demo_msvc_app.dto.OrderDto;
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.entities.Order;
 import com.demo.app.demo_msvc_app.entities.OrderItem;
 import com.demo.app.demo_msvc_app.entities.Product;
+import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.enums.OrderStatus;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.repositories.OrderRepository;
 import com.demo.app.demo_msvc_app.repositories.ProductRepository;
+import com.demo.app.demo_msvc_app.repositories.UserRepository;
+import com.demo.app.demo_msvc_app.request.OrderRequestDTO;
+import com.demo.app.demo_msvc_app.response.OrderResponseDTO;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
@@ -27,16 +31,44 @@ public class OrderService implements OrderServiceIMPL {
     private final ProductRepository productRepository;
     private final CartServiceIMPL cartService;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
     @Override
     public Order placeOrder(Long userId) {
+        //buscamos el carro y nos aseguramos de que no esté vacio
         Cart cart = cartService.getCartByUserId(userId);
-        Order order = createOrder(cart);
-        List <OrderItem> orderItemsList = createOrderItems(order, cart);
+        if (cart.getCartItems().isEmpty()) {
+            throw new IllegalStateException( "cannot create an order with an empty cart.");
+        }
 
-        order.setOrderItems(new HashSet<>(orderItemsList));
-        order.setTotalOrderAmount(calculateTotalAmount(orderItemsList));
+        Order order = new Order();
+        order.setUser(cart.getUser());
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderDate(LocalDate.now());
+
+        //hacemos la transformacion de cartItems a OrderItems
+
+        Set <OrderItem> orderItems = (Set<OrderItem>) cart.getCartItems().stream()
+        .map(cartItem ->{
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setPrice(cartItem.getPricePerUnit());
+            orderItem.setOrder(order);
+            return orderItem;
+        })
+        .collect(Collectors.toSet());
+
+        //asignamos items y calculamos el valor total de la orden
+        order.setOrderItems(orderItems);
+        order.setTotalOrderAmount(
+            orderItems.stream()
+            .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
+
+
+        //ya por ultimo quedaria <limpiar> el carro y guardar la orden
         Order savedOrder = orderRepository.save(order);
-        //una vez se haga la order y se guarde el servicio va a limpiar el carro automaticamente
         cartService.clearCart(cart.getId());
 
         return savedOrder;
@@ -49,13 +81,45 @@ public class OrderService implements OrderServiceIMPL {
     }
 
 
-    
-    private Order createOrder(Cart cart){
+    @Transactional
+    private OrderResponseDTO createOrder(OrderRequestDTO request){
+        // buscamos el usuario
+         User user = userRepository.findById(request.getUserId())
+        .orElseThrow( () -> new ElementsNotFoundException("User not found"));
+        //creamos la orden
         Order order = new Order();
-        order.setUser(cart.getUser());
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setUser(user);
         order.setOrderDate(LocalDate.now());
-        return order;
+        order.setOrderStatus(OrderStatus.PENDING);
+
+        //ahora agregamos los items a la orden
+        for(OrderRequestDTO.OrderItemRequestDTO itemRequest : request.getItems()) {
+            Product product = productRepository.findById(itemRequest.getProductId())
+            .orElseThrow( () -> new ElementsNotFoundException("Product not found"));
+
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setQuantity(itemRequest.getQuantity());
+            orderItem.setPrice(product.getPrice());
+            orderItem.setOrder(order);
+
+            order.getOrderItems().add(orderItem);
+        }
+          
+        //calculamos el total
+        order.setTotalOrderAmount(
+            order.getOrderItems().stream().map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
+
+        //guardamos la orden
+        Order savedOrder = orderRepository.save(order);
+
+        return new OrderResponseDTO(savedOrder);
+           
+        
+
     }
 
 
