@@ -42,8 +42,16 @@ private Product product;
 private Cart cart;
 
 public void setTotalPrice (){
-this.totalPrice = product.getPrice().multiply(new BigDecimal(quantity));
+BigDecimal itemPrice = this.pricePerUnit != null ?
+this.pricePerUnit : 
+this.product.getPrice();
 
+
+this.totalPrice= itemPrice.multiply(BigDecimal.valueOf(this.quantity));
+
+if (this.cart != null) {
+    this.cart.updateTotalAmount();
+}
 
 }
 

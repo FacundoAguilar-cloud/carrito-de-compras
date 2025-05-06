@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 
 import com.demo.app.demo_msvc_app.entities.OrderItem;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 @Data
+@AllArgsConstructor
 public class OrderItemDTO {
 private Long productId;
 private String productName;

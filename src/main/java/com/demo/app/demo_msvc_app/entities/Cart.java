@@ -73,13 +73,15 @@ public void removeItem(CartItem items){
 }    
 
 public void updateTotalAmount() {
-    this.totalAmount = cartItems.stream().map(item -> {
-        BigDecimal unitPrice = item.getPricePerUnit();
-        if (unitPrice == null) {
-            return BigDecimal.ZERO;
+    this.totalAmount = this.cartItems.stream()
+    .map(item -> {
+        // Fuerza la actualización del precio si es necesario
+        if (item.getTotalPrice() == null) {
+            item.setTotalPrice();
         }
-        return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
-    }).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return item.getTotalPrice();
+    })
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
 }
 
 

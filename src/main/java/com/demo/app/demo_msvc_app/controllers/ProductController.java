@@ -130,7 +130,7 @@ public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productI
     }
 }
 
-    @PutMapping("update-product/{id}")
+    @PutMapping("update-product/{productId}")
 public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductR product) {
    try {
     Product updatedProduct = productServiceIMPL.updateProduct(product, productId);

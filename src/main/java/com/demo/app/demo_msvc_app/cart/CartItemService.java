@@ -1,6 +1,6 @@
 package com.demo.app.demo_msvc_app.cart;
 
-import java.math.BigDecimal;
+
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -67,12 +67,7 @@ public class CartItemService implements CartItemServiceIMPL {
             item.setPricePerUnit(item.getProduct().getPrice());
             item.setTotalPrice();
         });
-        BigDecimal totalAmount = cart.getCartItems().stream()
-        .map(CartItem:: getTotalPrice)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        cart.setTotalAmount(totalAmount);
-
+       
         cartRepository.save(cart);
     }
     @Override

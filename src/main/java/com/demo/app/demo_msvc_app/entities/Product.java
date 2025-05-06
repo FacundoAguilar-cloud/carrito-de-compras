@@ -47,4 +47,13 @@ public Product(String name, String brand, BigDecimal price, int inventory, Strin
         
     }
 
+
+
+public void decreaseInventory(int quantity){
+    if (this.inventory < quantity) {
+        throw new IllegalStateException("Insuficient inventory for the product: " + this.name);
+    }
+    this.inventory -= quantity;
+}    
+
 }
