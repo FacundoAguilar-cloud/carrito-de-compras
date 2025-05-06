@@ -14,4 +14,6 @@ public interface OrderServiceIMPL {
  List<OrderDto> getUserOrders(Long userId);
 
  OrderDto convertToDto(Order order);
+
+ Order cancelOrder(Long orderId);
 }

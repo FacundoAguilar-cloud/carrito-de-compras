@@ -116,7 +116,7 @@ public class OrderService implements OrderServiceIMPL {
         //guardamos la orden
         Order savedOrder = orderRepository.save(order);
 
-        return new OrderResponseDTO(savedOrder);
+        return new OrderResponseDTO("ok", savedOrder);
            
         
 
@@ -150,5 +150,37 @@ public class OrderService implements OrderServiceIMPL {
     public OrderDto convertToDto(Order order){
         return modelMapper.map(order, OrderDto.class);
     }
+
+
+    @Transactional
+    @Override
+    public Order cancelOrder(Long orderId){
+        Order order = orderRepository.findById(orderId)
+        .orElseThrow(()-> new ElementsNotFoundException("Order not found with Id: " + orderId));
+
+
+        //para saber si la podemos eliminar o no tenemos que saber el status de la orden:
+        if (order.getOrderStatus() == OrderStatus.SHIPPED) {
+            throw new IllegalStateException("Cannot cancel a shipped order!");
+        }
+
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        //tambien tendriamos que reintegrar esos productos que fueron ordenados en ese momento al stock nuevamente
+        reintegrateStock(order);
+
+        return order;
+    }
+    private void reintegrateStock(Order order){
+            order.getOrderItems().forEach(item ->{
+                Product product = item.getProduct();
+                product.setInventory(product.getInventory() + item.getQuantity());
+                productRepository.save(product);
+            });
+    }
+
+
+
 
 }

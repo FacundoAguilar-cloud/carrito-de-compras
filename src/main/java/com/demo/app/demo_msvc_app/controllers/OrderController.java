@@ -14,9 +14,12 @@ import com.demo.app.demo_msvc_app.entities.Order;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
 import com.demo.app.demo_msvc_app.response.OrderResponseDTO;
+import com.demo.app.demo_msvc_app.response.canceledOrderResponse;
 import com.demo.app.demo_msvc_app.services.order.OrderServiceIMPL;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -63,6 +66,17 @@ public ResponseEntity <ApiResponse> getOrderByUserId(@PathVariable Long userId) 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Order not found", userId));
     }
 }
+
+@DeleteMapping("/cancel-order/{orderId}")
+public ResponseEntity <canceledOrderResponse> deleteOrderById(@PathVariable Long orderId, @RequestParam(required = false) String reason){
+    try {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(new canceledOrderResponse("Order canceled successfully", null));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new canceledOrderResponse("cannot cancel a completed order", null));
+    }
+}
+
 
 
 

@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreRemove;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,6 +40,8 @@ public class Order {
 @ToString.Include
 private Long orderId;
 
+private boolean deleted = false;
+
 private LocalDate orderDate;
 
 private BigDecimal totalOrderAmount;
@@ -55,4 +58,18 @@ private Set <OrderItem> orderItems = new HashSet<>();
 @JsonIgnore
 @ToString.Exclude
 private User user;
+
+@PreRemove
+public void softDelete(){
+this.deleted = true;
+this.orderStatus = orderStatus.CANCELLED;
 }
+
+
+
+
+
+
+
+}
+
