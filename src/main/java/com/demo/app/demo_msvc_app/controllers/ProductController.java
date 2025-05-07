@@ -110,7 +110,7 @@ public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
         }
         
         catch (AlreadyExistExcp e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse("Product already exist", null));
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
        }
        
 

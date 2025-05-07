@@ -12,6 +12,7 @@ import com.demo.app.demo_msvc_app.dto.ProductDto;
 import com.demo.app.demo_msvc_app.entities.Category;
 import com.demo.app.demo_msvc_app.entities.Image;
 import com.demo.app.demo_msvc_app.entities.Product;
+import com.demo.app.demo_msvc_app.exceptions.AlreadyExistExcp;
 import com.demo.app.demo_msvc_app.repositories.CategoryRepository;
 import com.demo.app.demo_msvc_app.repositories.ImageRepository;
 import com.demo.app.demo_msvc_app.repositories.ProductRepository;
@@ -32,6 +33,10 @@ public class ProductService implements ProductServiceIMPL {
 
     @Override
     public Product addProduct(AddProductR request) {
+
+      if (productExist(request.getName(), request.getBrand())) {
+        throw new AlreadyExistExcp(request.getBrand()+ " "+ request.getName()+ "Already exist!");
+      }  
 
       Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
       .orElseGet(()-> {
@@ -137,6 +142,10 @@ public class ProductService implements ProductServiceIMPL {
     @Override
     public List <ProductDto> productsConverted(List<Product> products){
         return products.stream().map(this::convertToDto).toList();
+    }
+
+    private boolean productExist(String name, String brand){
+        return productRepository.existsByNameAndBrand(name, brand);
     }
 
 }

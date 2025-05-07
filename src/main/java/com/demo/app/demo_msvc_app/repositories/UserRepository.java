@@ -15,4 +15,7 @@ Boolean existsByEmail(String email);
 @Query("SELECT u FROM User u LEFT JOIN FETCH u.cart WHERE u.id = :userId")
 Optional<User> findByIdWithCart(@Param("userId") Long userId);
 
+
+User findByEmail(String email);
+
 }

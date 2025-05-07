@@ -16,4 +16,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     Long countProductsByName(String name);
 
+    boolean existsByNameAndBrand(String name, String brand);
+
 }
