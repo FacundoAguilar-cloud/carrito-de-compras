@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/cart")
 @RequiredArgsConstructor
 public class CartController {
 private final CartServiceIMPL cartServiceIMPL;

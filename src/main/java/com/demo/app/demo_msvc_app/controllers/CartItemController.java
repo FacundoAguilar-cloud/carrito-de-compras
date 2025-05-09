@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.demo.app.demo_msvc_app.cart.CartItemServiceIMPL;
 import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
+import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
 import com.demo.app.demo_msvc_app.services.user.UserServiceIMPL;
+
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/cart-item")
 @RequiredArgsConstructor
 public class CartItemController {
 private final CartItemServiceIMPL cartItemServiceIMPL;
@@ -37,11 +40,14 @@ public ResponseEntity <ApiResponse> addItemToCart(
     @RequestParam Long productId,
     @RequestParam Integer quantity){
     try {
-        if (cartId == null) {
-           cartId = cartServiceIMPL.initalizeNewCart(userId);
-        }
+        User authenticatedUser = userService.getAuthenticatedUser(); //obtenemos el usuario autentificado
 
-        cartServiceIMPL.validateCartOwner(cartId, userId);
+        if (cartId == null) {
+           User user = userService.getAuthenticatedUser();
+            cartId = cartServiceIMPL.initalizeNewCart(authenticatedUser.getId());
+        }
+        //esto va a validar que estemos obteniendo el id del usuario autenticado
+        cartServiceIMPL.validateCartOwner(cartId, authenticatedUser.getId());
           
         
         cartItemServiceIMPL.addItemToCart(cartId, productId, quantity);
@@ -49,7 +55,9 @@ public ResponseEntity <ApiResponse> addItemToCart(
 
     } catch (ElementsNotFoundException e) {
        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
-    }    
+    }  catch(JwtException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));
+    }  
     
 }
 //funca

@@ -18,13 +18,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-@AllArgsConstructor
+
+
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 @Autowired
-private final JwtUtils jwtUtils;
+private  JwtUtils jwtUtils;
 @Autowired
-private final ShopUserDetailsService userDetailsService;
+private  ShopUserDetailsService userDetailsService;
 @Override
 protected void doFilterInternal(
   @NonNull  HttpServletRequest request, 

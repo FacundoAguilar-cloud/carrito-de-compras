@@ -3,6 +3,8 @@ package com.demo.app.demo_msvc_app.services.user;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.demo.app.demo_msvc_app.dto.UserDto;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService implements UserServiceIMPL {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
@@ -31,7 +34,7 @@ public class UserService implements UserServiceIMPL {
        .map(req -> {
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         return userRepository.save(user);
@@ -53,6 +56,16 @@ public class UserService implements UserServiceIMPL {
     }
     public UserDto convertToDto(User user){
         return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+       String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+       return userRepository.findByEmail(email);
+
+
+    
     }
 
 

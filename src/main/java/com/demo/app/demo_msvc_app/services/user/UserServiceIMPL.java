@@ -17,4 +17,6 @@ void deleteUserById(Long userId);
 
 UserDto convertToDto(User user);
 
+User getAuthenticatedUser();
+
 }
