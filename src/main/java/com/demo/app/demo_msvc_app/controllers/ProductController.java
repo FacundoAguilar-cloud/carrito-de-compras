@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -100,8 +101,10 @@ public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) 
    
 }
 
+ //solo puede hacerlo un admin
 
 @PostMapping("/add-product")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
        try {
           Product product = productServiceIMPL.addProduct(name);
@@ -115,8 +118,9 @@ public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
        
 
     }
-
+ //solo puede hacerlo un admin
   @DeleteMapping("/delete-product/{productId}")
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productId) {
     try {
         productServiceIMPL.deleteProduct(productId);
@@ -130,7 +134,9 @@ public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productI
     }
 }
 
+ //solo puede hacerlo un admin
     @PutMapping("update-product/{productId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductR product) {
    try {
     Product updatedProduct = productServiceIMPL.updateProduct(product, productId);
