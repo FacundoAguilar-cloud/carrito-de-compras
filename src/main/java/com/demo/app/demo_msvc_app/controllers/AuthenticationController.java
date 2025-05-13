@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("7api/auth")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
  private final AuthenticationManager authManager;
  private final JwtUtils jwtUtils;

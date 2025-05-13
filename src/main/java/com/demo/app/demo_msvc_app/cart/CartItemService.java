@@ -9,8 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.demo.app.demo_msvc_app.entities.Cart;
 import com.demo.app.demo_msvc_app.entities.CartItem;
 import com.demo.app.demo_msvc_app.entities.Product;
+import com.demo.app.demo_msvc_app.exceptions.CartLogicException;
+import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.repositories.CartItemRepository;
 import com.demo.app.demo_msvc_app.repositories.CartRepository;
+import com.demo.app.demo_msvc_app.repositories.ProductRepository;
 import com.demo.app.demo_msvc_app.services.images.products.category.ProductServiceIMPL;
 
 import lombok.RequiredArgsConstructor;
@@ -22,30 +25,38 @@ public class CartItemService implements CartItemServiceIMPL {
     private final ProductServiceIMPL productServiceIMPL;
     private final CartServiceIMPL cartServiceIMPL;
     private final CartRepository cartRepository;
+    private final ProductRepository productRepository;
     @Override
     public void addItemToCart(Long cartId, Long productId, int quantity) {
-       //1 obtener el carro
-        Cart cart = cartServiceIMPL.getCartById(cartId);
+        
+        //0 nos aseguramos que la cantidad nunca sea menor o igual a cero
+        if (quantity <= 0) {
+        throw new IllegalArgumentException("Quantity must be positive");
+    }
+       
+        //1 vamos a asegurarnos que tanto el carro como el producto existan
+        Cart cart = cartRepository.findById(cartId)
+        .orElseThrow(()-> new ElementsNotFoundException("Cart not found"));
        //2 obtener el producto
-        Product product = productServiceIMPL.getProductById(productId);
+        Product product = productRepository.findById(productId)
+        .orElseThrow(()-> new ElementsNotFoundException("Product not found"));
        //3 chequear si el producto ya está en el carro
-       CartItem cartItem = cart.getCartItems()
-                .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst().orElse(new CartItem());
-        if (cartItem.getId() == null) {
-            cartItem.setCart(cart);
-            cartItem.setProduct(product);
-            cartItem.setQuantity(quantity);
-            cartItem.setPricePerUnit((product.getPrice()));
-        }
-        else {
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
-        }
-        cartItem.setTotalPrice();
-        cart.addItemToCart(cartItem);
-        cartItemRepository.save(cartItem);
-        cartRepository.save(cart);
+
+       boolean alreadyHaveProduct= cartItemRepository.existsByCartIdAndProductId(cartId, productId);
+
+       if (alreadyHaveProduct) {
+        throw new CartLogicException("Product is already in cart, you can modify the quantity by other method");
+       }
+
+       CartItem newItem = new CartItem();
+       newItem.setCart(cart);
+       newItem.setProduct(product);
+       newItem.setQuantity(quantity);
+       newItem.setPricePerUnit(product.getPrice());
+       newItem.setTotalPrice();
+       
+               
+        cartItemRepository.save(newItem);
     }
 
     @Override
