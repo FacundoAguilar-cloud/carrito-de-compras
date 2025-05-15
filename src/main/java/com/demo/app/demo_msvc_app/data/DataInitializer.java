@@ -67,7 +67,7 @@ private void createDefaultUserIfNotExist(){
 
 private void createDefaultAdminIfNotExist(){
       Role  adminRole = roleRepository.findRoleByName("ROLE_ADMIN").get();
-    for(int i = 1; i <= 5; i++ ){
+    for(int i = 1; i <= 2; i++ ){
         String defaultEmail = "admin" +i+"email.com";
         
         if (userRepository.existsByEmail(defaultEmail)) {

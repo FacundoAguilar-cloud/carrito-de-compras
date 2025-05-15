@@ -13,10 +13,11 @@ import com.demo.app.demo_msvc_app.cart.CartItemServiceIMPL;
 import com.demo.app.demo_msvc_app.cart.CartServiceIMPL;
 import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
+import com.demo.app.demo_msvc_app.exceptions.JwtException;
 import com.demo.app.demo_msvc_app.response.ApiResponse;
 import com.demo.app.demo_msvc_app.services.user.UserServiceIMPL;
 
-import io.jsonwebtoken.JwtException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -32,6 +33,7 @@ private final CartItemServiceIMPL cartItemServiceIMPL;
 private final CartServiceIMPL cartServiceIMPL;
 private final UserServiceIMPL userService;
 
+
 //ya funciona perfecto
 @PostMapping("/add-item")   
 public ResponseEntity <ApiResponse> addItemToCart(
@@ -41,15 +43,18 @@ public ResponseEntity <ApiResponse> addItemToCart(
     @RequestParam Integer quantity){
     try {
         User authenticatedUser = userService.getAuthenticatedUser(); //obtenemos el usuario autentificado
-
-        if (cartId == null) {
-           User user = userService.getAuthenticatedUser();
-            cartId = cartServiceIMPL.initalizeNewCart(authenticatedUser.getId());
+        //debemos chequear que el usuario este auntentificado
+        if (authenticatedUser == null) {
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse("User not authenticated", null));
         }
-        //esto va a validar que estemos obteniendo el id del usuario autenticado
-        cartServiceIMPL.validateCartOwner(cartId, authenticatedUser.getId());
-          
+        //si no hay un carrito, esto lo inicializa con el id del usuario autenticado
+        if (cartId == null) {
+            cartId= cartServiceIMPL.initalizeNewCart(authenticatedUser.getId());
+        }
+         //
+         cartServiceIMPL.validateCartOwner(cartId, authenticatedUser.getId());
         
+         //agregamos el item al carrito 
         cartItemServiceIMPL.addItemToCart(cartId, productId, quantity);
     return ResponseEntity.ok(new ApiResponse("Item added successfully", null));  
 

@@ -34,13 +34,7 @@ public class ShopUserDetails implements UserDetails {
             user.getEmail(),
             user.getPassword(),
             authorities); 
-
-
     }
-
-
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
