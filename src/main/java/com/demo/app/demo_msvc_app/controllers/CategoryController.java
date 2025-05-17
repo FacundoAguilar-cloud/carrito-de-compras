@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +29,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/category")
 public class CategoryController {
 private final CategoryServiceIMPL categoryService;
 
-@GetMapping("/get-all-categories")
+@GetMapping("/get-all")
 public  ResponseEntity<ApiResponse> getAllCategories(){
     try {
         List <Category> categories = categoryService.getAllCategories();
@@ -45,7 +46,7 @@ public  ResponseEntity<ApiResponse> getAllCategories(){
 
 }
 
-@GetMapping("/get-category-by-id{id}")
+@GetMapping("/get-by-id{id}")
 public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
     try { 
         Optional<Category> category = categoryService.getCategoryById(id);
@@ -60,7 +61,7 @@ public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
     
 }
 
-@GetMapping("/get-by-category-name")
+@GetMapping("/get-by-name")
 public ResponseEntity<ApiResponse> getCategoryByName(@RequestParam String name) {
     try {
         Category theName = categoryService.getCategoryByName(name);
@@ -73,7 +74,8 @@ public ResponseEntity<ApiResponse> getCategoryByName(@RequestParam String name) 
    
 
 
-@PostMapping("/add-category")
+@PostMapping("/add")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> addCategory (@RequestBody Category name) {
        try {
           Category category = categoryService.createCategory(name);
@@ -86,7 +88,8 @@ public ResponseEntity <ApiResponse> addCategory (@RequestBody Category name) {
        
         
 }
-@DeleteMapping("/delete-category")
+@DeleteMapping("/delete")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> deleteCategoryById(@PathVariable Long id){
     try {
         categoryService.deleteCategoryById(id);
@@ -99,7 +102,8 @@ public ResponseEntity <ApiResponse> deleteCategoryById(@PathVariable Long id){
 
 }
 
-@PutMapping("update-category/{id}")
+@PutMapping("update/{id}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateCategory(@PathVariable Long id, @RequestBody Category category) {
    try {
     Category updatedCategory = categoryService.updateCategory(category, id);

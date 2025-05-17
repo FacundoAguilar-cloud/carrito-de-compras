@@ -36,7 +36,7 @@ public String createToken(Authentication authentication){
 
    return JWT.create()
    .withSubject(userPrincipal.getEmail())
-   .withClaim("id", userPrincipal.getId()) //los claims basicamente son la info del usuario que va a estar codificada dentro del token
+   .withClaim("id", userPrincipal.getId()) 
    .withArrayClaim("roles", roles.toArray(new String[0]))
    .withIssuedAt(new Date())
    .withExpiresAt(new Date(new Date().getTime() + expirationTime))
@@ -46,8 +46,6 @@ public String createToken(Authentication authentication){
 
 
 
-//ahora vamos a crear un metodo que va a cumplir la funcion de extrar el nombre de usuario directamente del token
-
 public String getUsernameFromToken(String token){
  DecodedJWT jwt = JWT.decode(token);
  return jwt.getSubject();   
@@ -55,7 +53,7 @@ public String getUsernameFromToken(String token){
 
 }
 
-//proximo a esto vamos a necesitar un método para validar el token
+
 
 public boolean validateToken(String token){
 try {

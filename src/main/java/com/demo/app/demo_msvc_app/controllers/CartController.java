@@ -29,7 +29,7 @@ public class CartController {
 private final CartServiceIMPL cartServiceIMPL;
 
 
-@GetMapping("/get-cart-by-id/{cartId}")
+@GetMapping("/get-by-id/{cartId}")
 public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
     try {   
         Cart cart = cartServiceIMPL.getCartById(cartId);
@@ -43,7 +43,7 @@ public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
     }
 }
 
-@DeleteMapping("/clear-cart-by-id/{cartId}")
+@DeleteMapping("/clear-by-id/{cartId}")
 @Transactional
 public ResponseEntity <ApiResponse> clearCart(@PathVariable Long cartId){
 try {

@@ -31,10 +31,10 @@ import lombok.var;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/products")
 public class ProductController {
 private final ProductServiceIMPL productServiceIMPL;
-@GetMapping("/get-all-products")
+@GetMapping("/get-all")
 public  ResponseEntity<ApiResponse> getAllProducts(){
     try {
         //dejamos de trabajar con la entidad para usar el DTO
@@ -61,7 +61,7 @@ public  ResponseEntity<ApiResponse> getProductsByCategory(@RequestParam String c
     }
 
 }
-@GetMapping("/get-product-by-name")
+@GetMapping("/get-by-name")
 public  ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name){
     try {
         List <Product> products = productServiceIMPL.getProductsByName(name);
@@ -88,7 +88,7 @@ public  ResponseEntity<ApiResponse> getProductsByBrand(@RequestParam String bran
 }
 
 
-@GetMapping("/get-product-by-id/{productId}")
+@GetMapping("/get-by-id/{productId}")
 public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) {
     try { 
         Product product = productServiceIMPL.getProductById(productId);
@@ -103,7 +103,7 @@ public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) 
 
 
 
-@PostMapping("/add-product")
+@PostMapping("/add")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
        try {
@@ -119,7 +119,7 @@ public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
 
     }
 
-  @DeleteMapping("/delete-product/{productId}")
+  @DeleteMapping("/delete/{productId}")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productId) {
     try {
@@ -135,7 +135,7 @@ public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productI
 }
 
 
-    @PutMapping("update-product/{productId}")
+    @PutMapping("update/{productId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductR product) {
    try {
@@ -148,7 +148,7 @@ public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @
     
     
 }
-@GetMapping("/count-products-by-name")
+@GetMapping("/count-by-name")
 public ResponseEntity<ApiResponse> countProductsByName(@RequestParam String name) {
     try {
         var product = productServiceIMPL.countProductsByName(name);

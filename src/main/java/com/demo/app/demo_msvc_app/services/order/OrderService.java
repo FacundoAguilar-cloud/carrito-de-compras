@@ -158,8 +158,6 @@ public class OrderService implements OrderServiceIMPL {
         Order order = orderRepository.findById(orderId)
         .orElseThrow(()-> new ElementsNotFoundException("Order not found with Id: " + orderId));
 
-
-        //para saber si la podemos eliminar o no tenemos que saber el status de la orden:
         if (order.getOrderStatus() == OrderStatus.SHIPPED) {
             throw new IllegalStateException("Cannot cancel a shipped order!");
         }

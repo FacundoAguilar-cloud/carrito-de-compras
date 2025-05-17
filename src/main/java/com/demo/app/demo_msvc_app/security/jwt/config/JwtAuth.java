@@ -25,14 +25,14 @@ public class JwtAuth implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-        // Crear el cuerpo de la respuesta JSON
+        
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
         body.put("error", "Unauthorized");
         body.put("message", authException.getMessage());
         body.put("path", request.getServletPath());
 
-        // Serializar el cuerpo a JSON y escribirlo en la respuesta
+        
         new ObjectMapper().writeValue(response.getOutputStream(), body);
     }
 

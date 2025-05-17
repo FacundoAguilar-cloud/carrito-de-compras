@@ -29,11 +29,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequiredArgsConstructor 
-@RequestMapping("/api")
+@RequestMapping("/api/order")
 public class OrderController {
 private final OrderServiceIMPL orderService; 
 
-@PostMapping("/create-order")
+@PostMapping("/create")
 public ResponseEntity <OrderResponseDTO> createOrder(@RequestParam Long userId) {
 try {
     Order order = orderService.placeOrder(userId);
@@ -45,7 +45,7 @@ return ResponseEntity.ok(new OrderResponseDTO("Order generated successfully", or
 
 }
 
-@GetMapping("/get-order/{orderId}")
+@GetMapping("/get/{orderId}")
 public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
     try {
         OrderDto order = orderService.getOrder(orderId);
@@ -55,7 +55,7 @@ public ResponseEntity<ApiResponse> getOrderById(@PathVariable Long orderId) {
     }
 }
 
-@GetMapping("/get-order-userId/{userId}")
+@GetMapping("/get-by-userId/{userId}")
 public ResponseEntity <ApiResponse> getOrderByUserId(@PathVariable Long userId) {
     try {
         //aca deberiamos de trabajar obligatoriamente con un DTO por una cuestion de conveniencia
@@ -67,7 +67,7 @@ public ResponseEntity <ApiResponse> getOrderByUserId(@PathVariable Long userId) 
     }
 }
 
-@DeleteMapping("/cancel-order/{orderId}")
+@DeleteMapping("/cancel/{orderId}")
 public ResponseEntity <canceledOrderResponse> deleteOrderById(@PathVariable Long orderId, @RequestParam(required = false) String reason){
     try {
         orderService.cancelOrder(orderId);

@@ -1,7 +1,9 @@
 package com.demo.app.demo_msvc_app.cart;
 
 
+import java.math.BigDecimal;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,18 +75,41 @@ public class CartItemService implements CartItemServiceIMPL {
 
     @Override
     public void updateItemQuantity(Long cartId, int quantity, Long productId) {
-        Cart cart = cartServiceIMPL.getCartById(cartId);
-        cart.getCartItems().stream()
-        .filter(item -> item.getProduct().getId().equals(productId))
-        .findFirst()
-        .ifPresent(item ->{
-            item.setQuantity(quantity);
-            item.setPricePerUnit(item.getProduct().getPrice());
-            item.calculateTotalPrice();
-        });
-       
-        cartRepository.save(cart);
+       if (quantity <= 0) {
+        throw new IllegalArgumentException("Quantity must be positive");
     }
+
+    Cart cart = cartServiceIMPL.getCartById(cartId);
+    
+    Optional<CartItem> optionalItem = cart.getCartItems().stream()
+        .filter(i -> i.getProduct().getId().equals(productId))
+        .findFirst();
+
+    if (optionalItem.isPresent()) {
+        CartItem item = optionalItem.get();
+        item.setQuantity(quantity);
+        item.setPricePerUnit(item.getProduct().getPrice());
+        item.calculateTotalPrice();
+    } else {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new ElementsNotFoundException("Product not found"));
+        CartItem newItem = new CartItem();
+        newItem.setProduct(product);
+        newItem.setQuantity(quantity);
+        newItem.setPricePerUnit(product.getPrice());
+        newItem.calculateTotalPrice();
+        newItem.setCart(cart);
+        cart.getCartItems().add(newItem);
+    }
+
+    BigDecimal updatedTotal = cart.getCartItems().stream()
+        .map(CartItem::getTotalPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    cart.setTotalAmount(updatedTotal);
+
+    cartRepository.save(cart);
+    }
+
     @Override
     public CartItem getCartItem(Long cartId, Long productId){
         Cart cart = cartServiceIMPL.getCartById(cartId);

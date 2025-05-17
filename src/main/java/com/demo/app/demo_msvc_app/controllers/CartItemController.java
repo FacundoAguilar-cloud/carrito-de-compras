@@ -35,7 +35,7 @@ private final UserServiceIMPL userService;
 
 
 
-@PostMapping("/add-item")   
+@PostMapping("/add")   
 public ResponseEntity <ApiResponse> addItemToCart(
     @RequestParam(required = false) Long cartId,
     @RequestParam Long userId,
@@ -66,7 +66,7 @@ public ResponseEntity <ApiResponse> addItemToCart(
     
 }
 
-@DeleteMapping("/remove-item-from-cart/{itemId}/{cartId}")
+@DeleteMapping("/remove/{itemId}/{cartId}")
 public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId){
  try {
     cartItemServiceIMPL.removeItemFromCart(cartId, itemId);
@@ -77,7 +77,7 @@ public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId
  
 }
 
-@PutMapping("/update-item-quantity/{cartId}/{itemId}")
+@PutMapping("/update-quantity/{cartId}/{itemId}")
 public ResponseEntity <ApiResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam Integer quantity ) {
     try {
         cartItemServiceIMPL.updateItemQuantity(cartId, quantity, itemId);

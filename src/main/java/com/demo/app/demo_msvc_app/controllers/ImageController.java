@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,11 +30,12 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/image")
 public class ImageController {
 private final ImageServiceIMPL imageService;
 
-@PostMapping("/upload-image/{productId}")
+@PostMapping("/upload/{productId}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> saveImage(@RequestParam ("files") List<MultipartFile> files, @PathVariable Long productId){
     try {
         List <ImageDto> imagesDtos = imageService.saveImage(files, productId);
@@ -44,7 +46,7 @@ public ResponseEntity<ApiResponse> saveImage(@RequestParam ("files") List<Multip
    
 }
 
-@GetMapping("/image-download/{imageId}")
+@GetMapping("/download/{imageId}")
 public ResponseEntity<ByteArrayResource> download(@PathVariable Long imageId){
     Image image = imageService.getImageById(imageId);
     ByteArrayResource resource = new ByteArrayResource(image.getImage());
@@ -53,7 +55,8 @@ public ResponseEntity<ByteArrayResource> download(@PathVariable Long imageId){
         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
         .body(resource);
 }
-@PutMapping("/image/update{imageId}")
+@PutMapping("/update{imageId}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file){
 try {
     Image image = imageService.getImageById(imageId);
@@ -66,7 +69,8 @@ try {
 }
 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Update failed", HttpStatus.INTERNAL_SERVER_ERROR));
 }
-@DeleteMapping("/image/delete{imageId}")
+@DeleteMapping("/delete{imageId}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> deleteImageById(@PathVariable Long imageId){
     try {
         Image image = imageService.getImageById(imageId);

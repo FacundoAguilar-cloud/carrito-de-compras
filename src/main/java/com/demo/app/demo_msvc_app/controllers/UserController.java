@@ -2,6 +2,7 @@ package com.demo.app.demo_msvc_app.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 private final UserServiceIMPL userService;
 
-@GetMapping("/get-user-by-id/{userId}")
+@GetMapping("/get-by-id/{userId}")
 public ResponseEntity <ApiResponse> getUserById(@PathVariable Long userId){
     try {
         User user = userService.getUserById(userId);
@@ -44,7 +45,8 @@ public ResponseEntity <ApiResponse> getUserById(@PathVariable Long userId){
 
 }
 
-@PostMapping("/create-user")
+@PostMapping("/create")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> createNewUser (NewUserR request) {
 try {
     User user = userService.createUser(request);
@@ -58,7 +60,8 @@ return ResponseEntity.ok(new ApiResponse("User created successfully", userDto));
 
 }
 
-@DeleteMapping("/delete-user/{userId}")
+@DeleteMapping("/delete/{userId}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity <ApiResponse> deleteUser(@PathVariable Long userId){
     try {
          userService.deleteUserById(userId);
@@ -68,7 +71,8 @@ public ResponseEntity <ApiResponse> deleteUser(@PathVariable Long userId){
     }
 }
 
-@PutMapping("update-user/{userId}")
+@PutMapping("update/{userId}")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateUser(@PathVariable Long userId, @RequestBody UpdateUserR request) {
     try {
         User user = userService.updateUser(request, userId);

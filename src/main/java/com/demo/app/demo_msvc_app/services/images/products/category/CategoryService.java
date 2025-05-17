@@ -42,7 +42,7 @@ public class CategoryService implements CategoryServiceIMPL {
             return categoryRepository.save(oldCategory);
         }).orElseThrow(() -> new RuntimeException("Category not found"));
     }
-    //esto lo que hace es buscarlo y si lo encuentra lo de borra, pero si no está presenete arroja error y avisa que la categoria no fue encontrada
+    
     @Override
     public void deleteCategoryById(Long id) {
        categoryRepository.findById(id)

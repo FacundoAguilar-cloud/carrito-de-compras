@@ -44,12 +44,10 @@ public class ImageService implements ImageServiceIMPL {
                 // Guardamos la imagen para obtener el ID generado
                 Image savedImage = imageRepository.save(image);
                 
-                // Construimos la URL CORRECTA (sin comillas en el path)
-                String downloadUrl = "/api/image-download/" + savedImage.getId(); // ← Coincide con tu @GetMapping
+                String downloadUrl = "/api/image-download/" + savedImage.getId(); 
                 savedImage.setDownloadUrl(downloadUrl);
                 
-                // Actualizamos la imagen con la URL completa
-                imageRepository.save(savedImage); // Solo necesario si usas el campo en otras consultas
+                imageRepository.save(savedImage); 
                 
                 ImageDto imageDto = new ImageDto();
                 imageDto.setId(savedImage.getId());
