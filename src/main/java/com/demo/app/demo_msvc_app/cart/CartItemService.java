@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
+
 public class CartItemService implements CartItemServiceIMPL {
     private final  CartItemRepository cartItemRepository;
     private final ProductServiceIMPL productServiceIMPL;
@@ -27,6 +28,7 @@ public class CartItemService implements CartItemServiceIMPL {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     @Override
+    @Transactional
     public void addItemToCart(Long cartId, Long productId, int quantity) {
         
         //0 nos aseguramos que la cantidad nunca sea menor o igual a cero
@@ -53,10 +55,12 @@ public class CartItemService implements CartItemServiceIMPL {
        newItem.setProduct(product);
        newItem.setQuantity(quantity);
        newItem.setPricePerUnit(product.getPrice());
-       newItem.setTotalPrice();
-       
-               
-        cartItemRepository.save(newItem);
+       newItem.calculateTotalPrice();
+    
+       cart.addItemToCart(newItem);
+
+        cartRepository.save(cart);
+
     }
 
     @Override
@@ -76,7 +80,7 @@ public class CartItemService implements CartItemServiceIMPL {
         .ifPresent(item ->{
             item.setQuantity(quantity);
             item.setPricePerUnit(item.getProduct().getPrice());
-            item.setTotalPrice();
+            item.calculateTotalPrice();
         });
        
         cartRepository.save(cart);

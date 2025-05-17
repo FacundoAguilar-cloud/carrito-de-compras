@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 
-public class ShopConfig {
+public class SecurityConfig {
     private final ShopUserDetailsService userDetailsService;
     private final JwtAuth jwtAuth;
     private final AuthenticationTokenFilter authenticationTokenFilter;
@@ -44,6 +44,7 @@ public class ShopConfig {
     .sessionManagement(sess -> sess
     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     )
+    .exceptionHandling(excep -> excep.authenticationEntryPoint(jwtAuth))
     .addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     
     return http.build();    

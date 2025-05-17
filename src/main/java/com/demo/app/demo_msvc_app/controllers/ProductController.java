@@ -101,7 +101,7 @@ public ResponseEntity<ApiResponse> getProductById(@PathVariable Long productId) 
    
 }
 
- //solo puede hacerlo un admin
+
 
 @PostMapping("/add-product")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -118,7 +118,7 @@ public ResponseEntity <ApiResponse> addProduct (@RequestBody AddProductR name) {
        
 
     }
- //solo puede hacerlo un admin
+
   @DeleteMapping("/delete-product/{productId}")
   @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productId) {
@@ -134,7 +134,7 @@ public ResponseEntity<ApiResponse> deleteProductById(@PathVariable Long productI
     }
 }
 
- //solo puede hacerlo un admin
+
     @PutMapping("update-product/{productId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
 public ResponseEntity<ApiResponse> updateProduct(@PathVariable Long productId, @RequestBody UpdateProductR product) {

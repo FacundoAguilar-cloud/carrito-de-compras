@@ -27,7 +27,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartController {
 private final CartServiceIMPL cartServiceIMPL;
-//funciona correctamente con el cambio del DTO
+
+
 @GetMapping("/get-cart-by-id/{cartId}")
 public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
     try {   
@@ -41,7 +42,7 @@ public ResponseEntity<ApiResponse> getCartById(@PathVariable Long cartId) {
                 .body(new ApiResponse(e.getMessage(), null));
     }
 }
-//funciona perfecto
+
 @DeleteMapping("/clear-cart-by-id/{cartId}")
 @Transactional
 public ResponseEntity <ApiResponse> clearCart(@PathVariable Long cartId){
@@ -54,7 +55,7 @@ try {
 }
  
 }
-//todo ok
+
 @GetMapping("/get-total-amount/{cartId}")
 public ResponseEntity <ApiResponse> getTotalAmount(@PathVariable Long cartId){
     try {

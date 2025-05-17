@@ -1,8 +1,8 @@
 package com.demo.app.demo_msvc_app.entities;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -40,7 +40,9 @@ private BigDecimal totalAmount = BigDecimal.ZERO;
 private Integer version;
 //con esto si eliminamos un carro, se van a eliminar todos los productos que estén dentro de el.
 @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-private Set <CartItem> cartItems = new HashSet<>();
+private List <CartItem> cartItems = new ArrayList<>();
+    
+
  //esto vendria a ser una especie de "getter seguro" lo cual nos va a hacer evitar el NPE
 
  @OneToOne(fetch = FetchType.LAZY)  
@@ -51,9 +53,9 @@ private User user;
 
 
 
-public Set<CartItem> getCartItems() {
+public List<CartItem> getCartItems() {
     if (this.cartItems == null) {
-        this.cartItems = new HashSet<>();
+        this.cartItems = new ArrayList<>();
     }
     return this.cartItems;
 }
@@ -75,16 +77,16 @@ public void removeItem(CartItem items){
 public void updateTotalAmount() {
     this.totalAmount = this.cartItems.stream()
     .map(item -> {
-        // Fuerza la actualización del precio si es necesario
-        if (item.getTotalPrice() == null) {
-            item.setTotalPrice();
-        }
-        return item.getTotalPrice();
-    })
-    .reduce(BigDecimal.ZERO, BigDecimal::add);
+       BigDecimal unitPrice = item.getPricePerUnit();
+       if (unitPrice == null) {
+        return BigDecimal.ZERO;
+       }
+       return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+        
+       
+}).reduce(BigDecimal.ZERO, BigDecimal::add);
+
 }
-
-
 
 
 

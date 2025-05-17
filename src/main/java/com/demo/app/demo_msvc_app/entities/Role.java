@@ -19,7 +19,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Role {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY) //El role va a tener una relacion con el usuario, muchos roles pueden ser incluidos en varios usuarios
+@GeneratedValue(strategy = GenerationType.IDENTITY) 
 private Long id;
 private String name;
 

@@ -40,7 +40,7 @@ public class OrderResponseDTO {
         private List<OrderItemDTO> orderItems;
         private String error;
 
-        // Constructor para éxito (con Order)
+        
         public OrderDataDTO(Order order) {
             this.orderId = order.getOrderId();
             this.orderDate = order.getOrderDate();
@@ -51,7 +51,7 @@ public class OrderResponseDTO {
                 .toList();
         }
 
-        // Constructor para error (con String)
+        
         public OrderDataDTO(String error) {
             this.error = error;
         }

@@ -66,7 +66,7 @@ JWTVerifier jwtVerifier = JWT.require(algorithm).build();
 jwtVerifier.verify(token);
 
 return true;
-} catch (JWTVerificationException e) {
+} catch ( JWTVerificationException  e) {
     throw new JwtException("Invalid Token, please try again");
 }
 

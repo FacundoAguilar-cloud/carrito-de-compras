@@ -34,7 +34,7 @@ private final CartServiceIMPL cartServiceIMPL;
 private final UserServiceIMPL userService;
 
 
-//ya funciona perfecto
+
 @PostMapping("/add-item")   
 public ResponseEntity <ApiResponse> addItemToCart(
     @RequestParam(required = false) Long cartId,
@@ -65,7 +65,7 @@ public ResponseEntity <ApiResponse> addItemToCart(
     }  
     
 }
-//funca
+
 @DeleteMapping("/remove-item-from-cart/{itemId}/{cartId}")
 public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId, @PathVariable Long itemId){
  try {
@@ -76,7 +76,7 @@ public ResponseEntity <ApiResponse> removeItemFromCart(@PathVariable Long cartId
  }
  
 }
-//funciona ok
+
 @PutMapping("/update-item-quantity/{cartId}/{itemId}")
 public ResponseEntity <ApiResponse> updateItemQuantity(@PathVariable Long cartId, @PathVariable Long itemId, @RequestParam Integer quantity ) {
     try {

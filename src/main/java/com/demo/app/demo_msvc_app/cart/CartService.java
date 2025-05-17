@@ -1,6 +1,7 @@
 package com.demo.app.demo_msvc_app.cart;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -68,6 +69,11 @@ public class CartService implements CartServiceIMPL {
         //vamos a buscar el usuario para asignarselo
         User user = userRepository.findById(userId)
         .orElseThrow(()-> new ElementsNotFoundException(""));
+
+         Optional<Cart> existingCart = cartRepository.findByUser(user);
+    if (existingCart.isPresent()) {
+        return existingCart.get().getId();
+    }
         
         
         Cart newCart = new Cart();

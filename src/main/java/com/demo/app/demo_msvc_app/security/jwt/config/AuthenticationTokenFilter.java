@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.demo.app.demo_msvc_app.exceptions.JwtException;
 import com.demo.app.demo_msvc_app.security.user.ShopUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,7 +33,7 @@ protected void doFilterInternal(
         throws ServletException, IOException {
     String jwt = parseJwt(request);
     try {
-        if (jwtUtils.validateToken(jwt)) {
+        if (jwt !=null && jwtUtils.validateToken(jwt)) {
             String username = jwtUtils.getUsernameFromToken(jwt);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -41,8 +42,8 @@ protected void doFilterInternal(
             
             new UsernamePasswordAuthenticationToken(
                 userDetails, 
-                userDetails
-                .getAuthorities(), null);
+                null,
+                 userDetails.getAuthorities());
 
            authentication.setDetails(
             new WebAuthenticationDetailsSource().buildDetails(request));
@@ -50,7 +51,7 @@ protected void doFilterInternal(
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
     
-    } catch (JWTVerificationException e) {
+    } catch (JwtException |JWTVerificationException e) {
        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
        response.getWriter().write("Invalid or expired token, please try again"); 

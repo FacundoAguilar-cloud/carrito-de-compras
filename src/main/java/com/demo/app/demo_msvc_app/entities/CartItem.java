@@ -21,18 +21,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EqualsAndHashCode(exclude = {"cart"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder
 public class CartItem {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
+@EqualsAndHashCode.Include
 private Long id;
 private int quantity;
 private BigDecimal pricePerUnit;
 private BigDecimal totalPrice;
 
 @ManyToOne
-@JoinColumn(name = "product_id") //muchos items del cart pueden pertenecer a un producto, por eso la relacion
+@JoinColumn(name = "product_id") 
 private Product product;
 
 
@@ -41,16 +42,16 @@ private Product product;
 @JoinColumn(name = "cart_id")
 private Cart cart;
 
-public void setTotalPrice (){
-BigDecimal itemPrice = this.pricePerUnit != null ?
-this.pricePerUnit : 
-this.product.getPrice();
+public void calculateTotalPrice (){
 
+if (this.pricePerUnit == null || this.quantity <= 0) {
+    throw new IllegalStateException("Price per unit and quantity must be set before calculating");
+}
+this.totalPrice = this.pricePerUnit.multiply(BigDecimal.valueOf(this.quantity));
 
-this.totalPrice= itemPrice.multiply(BigDecimal.valueOf(this.quantity));
-
-if (this.cart != null) {
-    this.cart.updateTotalAmount();
+if (this.cart != null)  {
+this.cart.updateTotalAmount();
+    
 }
 
 }

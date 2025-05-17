@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.demo.app.demo_msvc_app.entities.User;
-import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
+import com.demo.app.demo_msvc_app.exceptions.UserNotFoundException;
 import com.demo.app.demo_msvc_app.repositories.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class ShopUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = Optional.ofNullable(userRepository.findByEmail(email))
-        .orElseThrow( () ->  new ElementsNotFoundException("User not found, please try again"));
+        .orElseThrow( () ->  new UserNotFoundException("User not found, please try again"));
 
         return ShopUserDetails.createUserDetails(user);
     }

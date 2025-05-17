@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
  private final AuthenticationManager authManager;
  private final JwtUtils jwtUtils;
-//con la anotacion valid vamos a validar el imput para asegurarnos de la clase que le estamos pasando
+//con la anotacion valid vamos a validar el input para asegurarnos de la clase que le estamos pasando
  
 @PostMapping("/login")
 public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request){

@@ -32,7 +32,7 @@ private String description;
 @JoinColumn(name =  "category_id")
 @JsonIgnore
 private Category category;
-//con esto si alguna imagen queda suelta porque un producto se eliminó, sera removida automaticamente y no quedaran datos "huérfanos"
+
 @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 private List <Image> images;
 
