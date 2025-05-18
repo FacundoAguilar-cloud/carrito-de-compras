@@ -68,9 +68,17 @@ public class CartItemService implements CartItemServiceIMPL {
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         Cart cart = cartServiceIMPL.getCartById(cartId);
-        CartItem itemToRemove = getCartItem(cartId, productId);
-        cart.removeItem(itemToRemove);
-        cartRepository.save(cart);
+    cart.getCartItems().stream()
+        .filter(item -> item.getProduct().getId().equals(productId))
+        .findFirst()
+        .ifPresent(item -> {
+            item.setQuantity(0);
+            item.setTotalPrice(BigDecimal.ZERO);
+            item.setActive(false); // se desactiva en lugar de eliminar!
+        });
+
+    cartServiceIMPL.recalculateCartTotal(cart);
+    cartRepository.save(cart);
     }
 
     @Override
@@ -90,9 +98,10 @@ public class CartItemService implements CartItemServiceIMPL {
         item.setQuantity(quantity);
         item.setPricePerUnit(item.getProduct().getPrice());
         item.calculateTotalPrice();
+        item.setActive(true);
     } else {
         Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ElementsNotFoundException("Product not found"));
+            .orElseThrow(() -> new ElementsNotFoundException("Product not found, cant update."));
         CartItem newItem = new CartItem();
         newItem.setProduct(product);
         newItem.setQuantity(quantity);

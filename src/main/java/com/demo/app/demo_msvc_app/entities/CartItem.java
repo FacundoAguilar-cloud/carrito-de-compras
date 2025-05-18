@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +32,9 @@ private Long id;
 private int quantity;
 private BigDecimal pricePerUnit;
 private BigDecimal totalPrice;
+
+@Column(nullable = false)
+private boolean active;
 
 @ManyToOne
 @JoinColumn(name = "product_id") 

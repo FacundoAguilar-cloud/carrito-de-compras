@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.demo.app.demo_msvc_app.dto.CartDto;
 import com.demo.app.demo_msvc_app.entities.Cart;
+import com.demo.app.demo_msvc_app.entities.CartItem;
 import com.demo.app.demo_msvc_app.entities.User;
 import com.demo.app.demo_msvc_app.exceptions.ElementsNotFoundException;
 import com.demo.app.demo_msvc_app.exceptions.UnauthorizedAccessException;
@@ -96,6 +97,15 @@ public class CartService implements CartServiceIMPL {
 
      public CartDto convertToDto(Cart cart){
         return modelMapper.map(cart, CartDto.class);
+    }
+
+    public void recalculateCartTotal(Cart cart){
+        BigDecimal total = cart.getCartItems().stream()
+            .filter(CartItem::isActive)
+            .map(CartItem::getTotalPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        cart.setTotalAmount(total);
     }
 
    

@@ -20,8 +20,9 @@ Long initalizeNewCart(Long userId);
 
 void validateCartOwner(Long cartId, Long userId);
 
-
 CartDto convertToDto(Cart cart);
+
+void recalculateCartTotal(Cart cart);
 
 
 
